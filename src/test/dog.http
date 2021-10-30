@@ -1,0 +1,12 @@
+POST http://localhost:8080/dog
+Content-Type: application/json
+
+{
+  "name": "Tuzik",
+  "height": 12.1,
+  "weight": 1
+}
+
+###
+GET http://localhost:8080/dog/0
+Accept: application/json
