@@ -1,8 +1,14 @@
 package com.example.dog;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import javax.validation.constraints.*;
 import java.util.Calendar;
 
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
+
+@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE)
 public class Dog {
     @NotNull
     @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters long.")

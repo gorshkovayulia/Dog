@@ -4,12 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.core.MultivaluedHashMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @RestController
-@RequestMapping(path="/dog", produces="application/json", consumes = "application/json")
+@RequestMapping(path="/dog", produces="application/json")
 public class DogController {
     private static ArrayList<Dog> dogs = new ArrayList<>();
 
@@ -21,16 +19,13 @@ public class DogController {
         return new ResponseEntity<>(dogs.get(id), HttpStatus.OK);
     }
 
-    @PostMapping(consumes="application/json", produces = "application/json")
-    public ResponseEntity<Dog> createDog(@RequestBody Dog dog) {
+    @PostMapping
+    public Dog createDog(@RequestBody Dog dog) {
         dogs.add(dog);
-        MultivaluedHashMap<String, String> headers = new MultivaluedHashMap<>();
-        headers.put("Content-Type", Arrays.asList("application/json"));
-        return new ResponseEntity<Dog>(dog, headers, HttpStatus.CREATED);
-//        return ResponseEntity.ok(dog);
+        return dog;
     }
 
-    @PutMapping(path = "/{id}", consumes="application/json")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<Dog> updateDog(@PathVariable("id") int id, @RequestBody Dog dog) {
         if(dogs.size() < id) {
             new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
