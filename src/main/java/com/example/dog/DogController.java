@@ -28,7 +28,7 @@ public class DogController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<Dog> updateDog(@PathVariable("id") int id, @RequestBody Dog dog) {
         if(dogs.size() < id) {
-            new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(dogs.set(id, dog), HttpStatus.NO_CONTENT);
     }

@@ -3,13 +3,17 @@ package com.example.dog;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import javax.validation.constraints.*;
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 
 @JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE)
 public class Dog {
+
+    private int id;
+
     @NotNull
     @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters long.")
     private String name;
@@ -23,16 +27,15 @@ public class Dog {
     private int weight;
 
     @Past(message = "Birthday must be before NOW.")
-    private Calendar birthday;
+    private LocalDate birthday;
+
     public Dog() {}
-    public Dog(String name, int height, int weight, Calendar birthday) {
+
+    public Dog(int id, String name, int height, int weight, LocalDate birthday) {
+        this.id = id;
         this.name = name;
         this.weight = weight;
         this.height = height;
         this.birthday = birthday;
-    }
-
-    public void play() {
-        System.out.println("Bla bla");
     }
 }

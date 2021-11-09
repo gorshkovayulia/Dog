@@ -1,12 +1,27 @@
-POST http://localhost:8080/dog
+POST http://localhost:8081/dog
 Content-Type: application/json
 
 {
-  "name": "Tuzik",
+  "name": "Berta",
   "height": 12.1,
   "weight": 1
 }
 
 ###
-GET http://localhost:8080/dog/0
+GET http://localhost:8081/dog/0
 Accept: application/json
+
+
+###
+PUT http://localhost:8081/dog/6
+Content-Type: application/json
+
+{
+  "name": "Sharik",
+  "height": 24,
+  "weight": 8
+}
+
+###
+DELETE http://localhost:8081/dog/100
+Content-Type: application/json
