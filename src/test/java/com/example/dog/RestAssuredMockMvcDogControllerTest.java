@@ -28,17 +28,14 @@ public class RestAssuredMockMvcDogControllerTest {
         given().contentType("application/json").body(dog)
                 .when().post("/dog");
 
-        MockMvcResponse resp = given().param("id", 1).
-                when().get("/");
-
+        MockMvcResponse resp = given().when().get("/dog/1");
         Dog dog2 = resp.getBody().as(Dog.class);
         ReflectionAssert.assertReflectionEquals(dog, dog2);
     }
 
     @Test
     public void impossibleToGetNotExistingDog() {
-        given().param("id", 100).
-                when().get("/").
+        given().when().get("/dog/100").
                 then().statusCode(HttpStatus.NOT_FOUND.value());
     }
 
@@ -56,7 +53,7 @@ public class RestAssuredMockMvcDogControllerTest {
 
     @Test
     public void possibleToUpdateExistingDog() {
-        Dog dog = new Dog(3, "Tuzik", 24, 8,
+        Dog dog = new Dog(3, "Tuzikk", 24, 8,
                 LocalDate.of(2021, Month.OCTOBER, 26));
 
         Dog dog2 = new Dog(4,"Sharik", 15, 10,
@@ -66,35 +63,32 @@ public class RestAssuredMockMvcDogControllerTest {
                 .when().post("/dog");
 
         given().contentType("application/json").body(dog2).
-                when().put("dog/3");
+                when().put("/dog/3");
 
-        MockMvcResponse resp = given().param("id", 3).
-                when().get("/");
-
+        MockMvcResponse resp = given().when().get("/dog/4");
         Dog dog3 = resp.getBody().as(Dog.class);
         ReflectionAssert.assertReflectionEquals(dog2, dog3);
     }
 
     @Test
     public void impossibleToUpdateNotExistingDog() {
-        Dog dog = new Dog(6, "Tuzik", 24, 8,
+        Dog dog = new Dog(5, "Tuzik", 24, 8,
                 LocalDate.of(2021, Month.OCTOBER, 26));
 
         given().contentType("application/json").body(dog).
-                when().put("dog/6").
+                when().put("dog/10").
                 then().statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
     public void possibleToDeleteExistingDog() {
-        Dog dog = new Dog(6, "Tuzik", 24, 8,
+        Dog dog = new Dog(5, "Tuzik", 24, 8,
                 LocalDate.of(2021, Month.OCTOBER, 26));
 
         given().contentType("application/json").body(dog)
                 .when().post("/dog");
 
-        MockMvcResponse resp = given().param("id",  6).contentType("application/json")
-                .when().delete("/");
+        MockMvcResponse resp = given().when().delete("/dog/5");;
 
         Dog dog2 = resp.getBody().as(Dog.class);
         ReflectionAssert.assertReflectionEquals(dog, dog2);
@@ -102,8 +96,7 @@ public class RestAssuredMockMvcDogControllerTest {
 
     @Test
     public void impossibleToDeleteNotExistingDog() {
-        given().param("id",  1).contentType("application/json")
-                .when().delete("/")
-                .then().statusCode(HttpStatus.NOT_FOUND.value());
+        given().when().delete("/dog/100").
+                then().statusCode(HttpStatus.NOT_FOUND.value());
     }
 }

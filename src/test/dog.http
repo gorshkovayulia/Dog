@@ -2,18 +2,19 @@ POST http://localhost:8081/dog
 Content-Type: application/json
 
 {
-  "name": "Berta",
+  "id": 19,
+  "name": "Bertaa",
   "height": 12.1,
   "weight": 1
 }
 
 ###
-GET http://localhost:8081/dog/0
+GET http://localhost:8081/dog/19
 Accept: application/json
 
 
 ###
-PUT http://localhost:8081/dog/6
+PUT http://localhost:8081/dog/19
 Content-Type: application/json
 
 {
@@ -23,5 +24,5 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:8081/dog/100
+DELETE http://localhost:8081/dog/19
 Content-Type: application/json

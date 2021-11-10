@@ -38,4 +38,8 @@ public class Dog {
         this.height = height;
         this.birthday = birthday;
     }
+
+    public int getId() {
+        return id;
+    }
 }

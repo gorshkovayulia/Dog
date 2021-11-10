@@ -13,10 +13,12 @@ public class DogController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Dog> getDog(@PathVariable("id") int id) {
-        if(dogs.size() < id) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        for (Dog dog : dogs) {
+            if (dog.getId() == id) {
+                return new ResponseEntity<>(dog, HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(dogs.get(id), HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
@@ -27,17 +29,21 @@ public class DogController {
 
     @PutMapping(path = "/{id}")
     public ResponseEntity<Dog> updateDog(@PathVariable("id") int id, @RequestBody Dog dog) {
-        if(dogs.size() < id) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        for (Dog dog2 : dogs) {
+            if (dog2.getId() == id) {
+                return new ResponseEntity<>(dogs.set(dogs.indexOf(dog2), dog), HttpStatus.NO_CONTENT);
+            }
         }
-        return new ResponseEntity<>(dogs.set(id, dog), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Dog> removeDog(@PathVariable("id") int id) {
-        if(dogs.size() < id) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        for (Dog dog : dogs) {
+            if (dog.getId() == id) {
+                return new ResponseEntity<>(dogs.remove(dogs.indexOf(dog)), HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(dogs.remove(id), HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 }
