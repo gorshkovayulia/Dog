@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
@@ -26,17 +27,20 @@ public class Dog {
     @Min(value = 0, message = "Weight must be equal or greater than 0.")
     private int weight;
 
-    @Past(message = "Birthday must be before NOW.")
+//    @Past(message = "Birthday must be before NOW.")
     private LocalDate birthday;
 
     public Dog() {}
 
-    public Dog(int id, String name, int height, int weight, LocalDate birthday) {
-        this.id = id;
+    public Dog(String name, int height, int weight, LocalDate birthday) {
         this.name = name;
         this.weight = weight;
         this.height = height;
         this.birthday = birthday;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getId() {
