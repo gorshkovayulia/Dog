@@ -9,8 +9,6 @@ import org.unitils.reflectionassert.ReflectionAssert;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Set;
-import static org.junit.Assert.assertEquals;
 
 public class DogControllerRestAssuredTest {
 
@@ -27,13 +25,14 @@ public class DogControllerRestAssuredTest {
         Dog fromPost = postDog(dog);
         Dog fromDog = getDog(fromPost.getId());
 
+        dog.setId(fromDog.getId());
         ReflectionAssert.assertReflectionEquals(dog, fromDog);
         ReflectionAssert.assertReflectionEquals(dog, fromPost);
     }
 
     @Test
     public void returns404_ifDogNotFoundDuringGet() {
-        Response resp = getDogAndReturn(100);
+        Response resp = getDogAndReturn(Integer.MAX_VALUE);
         int code = resp.getStatusCode();
         Assert.assertEquals(code, 404);
     }
@@ -45,14 +44,15 @@ public class DogControllerRestAssuredTest {
         Dog dog2 = new Dog("Sharik", 15, 10,
                 LocalDate.of(2020, Month.MARCH, 15));
 
-        postDog(dog);
-        Dog dog3 = getDogFromPutRequest(2, dog2);
-        ReflectionAssert.assertReflectionEquals(dog2, dog3);
+        Dog postDog = postDog(dog);
+        Dog putDog = getDogFromPutRequest(postDog.getId(), dog2);
+        dog2.setId(putDog.getId());
+        ReflectionAssert.assertReflectionEquals(dog2, putDog);
     }
 
     @Test
     public void returns404_ifUpdatingNotExistingDog() {
-        Dog dog = new Dog("Tuzikm", 24, 8,
+        Dog dog = new Dog("Tuzik", 24, 8,
                 LocalDate.of(2021, Month.OCTOBER, 26));
 
         Response resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
@@ -64,10 +64,8 @@ public class DogControllerRestAssuredTest {
         Dog dog = postDog(new Dog("Scooby-Doo", 80, 3,
                 LocalDate.of(2019, Month.OCTOBER, 10)));
 
-        Dog fromDelete = getDogFromDeleteRequest(3);
-
+        Dog fromDelete = getDogFromDeleteRequest(dog.getId());
         ReflectionAssert.assertReflectionEquals(dog, fromDelete);
-        assertEquals(404, getDogAndReturn(3).getStatusCode());
     }
 
     @Test
@@ -95,10 +93,8 @@ public class DogControllerRestAssuredTest {
     }
 
     private static Dog getDogFromPutRequest(int id, Dog dog) {
-        Response resp = RestAssured.
-                given().contentType("application/json").body(dog).
-                when().put("/dog/{id}", id);
-        Assert.assertEquals(resp.getStatusCode(), 204);
+        Response resp = updateDogAndReturn(id, dog);
+        Assert.assertEquals(resp.getStatusCode(), 200);
         return resp.as(Dog.class);
     }
 

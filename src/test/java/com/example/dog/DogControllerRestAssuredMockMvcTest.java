@@ -2,9 +2,9 @@ package com.example.dog;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.springframework.http.HttpStatus;
 
 import org.unitils.reflectionassert.ReflectionAssert;
 
@@ -13,7 +13,7 @@ import java.time.Month;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
-public class RestAssuredMockMvcDogControllerTest {
+public class DogControllerRestAssuredMockMvcTest {
 
     @BeforeClass
     public void setUp() {
@@ -22,81 +22,97 @@ public class RestAssuredMockMvcDogControllerTest {
 
     @Test
     public void possibleToGetExistingDog() {
-        Dog dog = new Dog(1, "Tuzik", 24, 8,
+        Dog dog = new Dog("Tuzik", 24, 8,
                 LocalDate.of(2021, Month.OCTOBER, 26));
 
-        given().contentType("application/json").body(dog)
-                .when().post("/dog");
+        Dog fromPost = postDog(dog);
+        Dog fromDog = getDog(fromPost.getId());
 
-        MockMvcResponse resp = given().when().get("/dog/1");
-        Dog dog2 = resp.getBody().as(Dog.class);
-        ReflectionAssert.assertReflectionEquals(dog, dog2);
+        dog.setId(fromDog.getId());
+        ReflectionAssert.assertReflectionEquals(dog, fromDog);
+        ReflectionAssert.assertReflectionEquals(dog, fromPost);
     }
 
     @Test
-    public void impossibleToGetNotExistingDog() {
-        given().when().get("/dog/100").
-                then().statusCode(HttpStatus.NOT_FOUND.value());
-    }
-
-    @Test
-    public void possibleToCreateDog() {
-        Dog dog = new Dog(2, "Tuzik", 24, 8,
-                LocalDate.of(2021, Month.OCTOBER, 26));
-
-        MockMvcResponse resp = given().contentType("application/json").body(dog)
-                .when().post("/dog");
-
-        Dog dog2 = resp.getBody().as(Dog.class);
-        ReflectionAssert.assertReflectionEquals(dog, dog2);
+    public void returns404_ifDogNotFoundDuringGet() {
+        MockMvcResponse resp = getDogAndReturn(Integer.MAX_VALUE);
+        int code = resp.getStatusCode();
+        Assert.assertEquals(code, 404);
     }
 
     @Test
     public void possibleToUpdateExistingDog() {
-        Dog dog = new Dog(3, "Tuzikk", 24, 8,
+        Dog dog = new Dog("Tuzik", 24, 8,
                 LocalDate.of(2021, Month.OCTOBER, 26));
+        Dog dog2 = new Dog("Sharik", 15, 10,
+                LocalDate.of(2020, Month.MARCH, 15));
 
-        Dog dog2 = new Dog(4,"Sharik", 15, 10,
-                LocalDate.of(2021, Month.OCTOBER, 25));
-
-        given().contentType("application/json").body(dog)
-                .when().post("/dog");
-
-        given().contentType("application/json").body(dog2).
-                when().put("/dog/3");
-
-        MockMvcResponse resp = given().when().get("/dog/4");
-        Dog dog3 = resp.getBody().as(Dog.class);
-        ReflectionAssert.assertReflectionEquals(dog2, dog3);
+        Dog postDog = postDog(dog);
+        Dog putDog = getDogFromPutRequest(postDog.getId(), dog2);
+        dog2.setId(putDog.getId());
+        ReflectionAssert.assertReflectionEquals(dog2, putDog);
     }
 
     @Test
-    public void impossibleToUpdateNotExistingDog() {
-        Dog dog = new Dog(5, "Tuzik", 24, 8,
+    public void returns404_ifUpdatingNotExistingDog() {
+        Dog dog = new Dog("Tuzik", 24, 8,
                 LocalDate.of(2021, Month.OCTOBER, 26));
 
-        given().contentType("application/json").body(dog).
-                when().put("dog/10").
-                then().statusCode(HttpStatus.NOT_FOUND.value());
+        MockMvcResponse resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
+        Assert.assertEquals(resp.getStatusCode(), 404);
     }
 
     @Test
     public void possibleToDeleteExistingDog() {
-        Dog dog = new Dog(5, "Tuzik", 24, 8,
-                LocalDate.of(2021, Month.OCTOBER, 26));
+        Dog dog = postDog(new Dog("Scooby-Doo", 80, 3,
+                LocalDate.of(2019, Month.OCTOBER, 10)));
 
-        given().contentType("application/json").body(dog)
-                .when().post("/dog");
-
-        MockMvcResponse resp = given().when().delete("/dog/5");;
-
-        Dog dog2 = resp.getBody().as(Dog.class);
-        ReflectionAssert.assertReflectionEquals(dog, dog2);
+        Dog fromDelete = getDogFromDeleteRequest(dog.getId());
+        ReflectionAssert.assertReflectionEquals(dog, fromDelete);
     }
 
     @Test
-    public void impossibleToDeleteNotExistingDog() {
-        given().when().delete("/dog/100").
-                then().statusCode(HttpStatus.NOT_FOUND.value());
+    public void returns404_ifDeletingNotExistingDog() {
+        MockMvcResponse resp = deleteDogAndReturn(Integer.MAX_VALUE);
+        Assert.assertEquals(resp.getStatusCode(), 404);
+    }
+
+    private static Dog getDog(int id) {
+        MockMvcResponse resp = getDogAndReturn(id);
+        Assert.assertEquals(resp.getStatusCode(), 200);
+        return resp.as(Dog.class);
+    }
+
+    private static MockMvcResponse getDogAndReturn(int id) {
+        return given().when().get("/dog/{id}", id).thenReturn();
+    }
+
+    private static Dog postDog(Dog dog) {
+        MockMvcResponse resp =
+                given().contentType("application/json").body(dog)
+                .when().post("/dog");
+        Assert.assertEquals(resp.getStatusCode(), 200);
+        return resp.as(Dog.class);
+    }
+
+    private static Dog getDogFromPutRequest(int id, Dog dog) {
+        MockMvcResponse resp = updateDogAndReturn(id, dog);
+        Assert.assertEquals(resp.getStatusCode(), 200);
+        return resp.as(Dog.class);
+    }
+
+    private static MockMvcResponse updateDogAndReturn(int id, Dog dog) {
+        return given().contentType("application/json").body(dog).
+                when().put("/dog/{id}", id).thenReturn();
+    }
+
+    private static Dog getDogFromDeleteRequest(int id) {
+        MockMvcResponse resp = deleteDogAndReturn(id);
+        Assert.assertEquals(resp.getStatusCode(), 200);
+        return resp.as(Dog.class);
+    }
+
+    private static MockMvcResponse deleteDogAndReturn(int id) {
+        return given().when().delete("/dog/{id}", id).thenReturn();
     }
 }

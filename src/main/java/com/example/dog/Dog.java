@@ -10,24 +10,25 @@ import java.util.Objects;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 
-@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE)
+//@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE)
+@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = ANY, isGetterVisibility = ANY)
 public class Dog {
 
     private int id;
 
     @NotNull
-    @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters long.")
+    @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters long")
     private String name;
 
     @NotNull
-    @Min(value = 0, message = "Height must be equal or greater than 0.")
+    @Min(value = 0, message = "The height must be greater than 0")
     private int height;
 
     @NotNull
-    @Min(value = 0, message = "Weight must be equal or greater than 0.")
+    @Min(value = 0, message = "The weight must be greater than 0")
     private int weight;
 
-//    @Past(message = "Birthday must be before NOW.")
+    @Past(message = "Birthday must be before NOW.")
     private LocalDate birthday;
 
     public Dog() {}
@@ -39,11 +40,11 @@ public class Dog {
         this.birthday = birthday;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
