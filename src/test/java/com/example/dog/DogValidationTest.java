@@ -25,7 +25,7 @@ public class DogValidationTest {
 
     @Test
     public void possibleToSetCorrectName() {
-        Dog dog = new Dog("Tuzik", 24, 8, LocalDate.of(2021, Month.OCTOBER, 26));
+        Dog dog = new Dog("Tuzik", 1, 1, LocalDate.of(2021, Month.OCTOBER, 26));
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(0, violations.size());
@@ -55,7 +55,7 @@ public class DogValidationTest {
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(1, violations.size());
-        assertEquals("Name must be between 1 and 100 characters long.", violations.iterator().next().getMessage());
+        assertEquals("Name cannot be null", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class DogValidationTest {
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(1, violations.size());
-        assertEquals("Name must be between 1 and 100 characters long.", violations.iterator().next().getMessage());
+        assertEquals("Name must be between 1 and 100 characters long", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -75,15 +75,7 @@ public class DogValidationTest {
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(1, violations.size());
-        assertEquals("Name must be between 1 and 100 characters long.", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    public void possibleToSetCorrectHeight() {
-        Dog dog = new Dog("Tuzik", 1, 8, LocalDate.of(2021, Month.OCTOBER, 26));
-
-        Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
-        assertEquals(0, violations.size());
+        assertEquals("Name must be between 1 and 100 characters long", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -92,7 +84,7 @@ public class DogValidationTest {
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(1, violations.size());
-        assertEquals("The height must be greater than 0", violations.iterator().next().getMessage());
+        assertEquals("Height must be greater than 0", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -101,33 +93,25 @@ public class DogValidationTest {
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(1, violations.size());
-        assertEquals("The height must be greater than 0", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    public void possibleToSetCorrectWeight() {
-        Dog dog = new Dog("Tuzik", 500, 8, LocalDate.of(2021, Month.OCTOBER, 26));
-
-        Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
-        assertEquals(0, violations.size());
+        assertEquals("Height must be greater than 0", violations.iterator().next().getMessage());
     }
 
     @Test
     public void impossibleToSetZeroWeight() {
-        Dog dog = new Dog("Tuzik", 0, 8, LocalDate.of(2021, Month.OCTOBER, 26));
+        Dog dog = new Dog("Tuzik", 5, 0, LocalDate.of(2021, Month.OCTOBER, 26));
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(1, violations.size());
-        assertEquals("The weight must be greater than 0", violations.iterator().next().getMessage());
+        assertEquals("Weight must be greater than 0", violations.iterator().next().getMessage());
     }
 
     @Test
     public void impossibleToSetNegativeWeight() {
-        Dog dog = new Dog("Tuzik", -1, 8, LocalDate.of(2021, Month.OCTOBER, 26));
+        Dog dog = new Dog("Tuzik", 10, -8, LocalDate.of(2021, Month.OCTOBER, 26));
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
         assertEquals(1, violations.size());
-        assertEquals("The weight must be greater than 0", violations.iterator().next().getMessage());
+        assertEquals("Weight must be greater than 0", violations.iterator().next().getMessage());
     }
 
     @Test
@@ -139,18 +123,20 @@ public class DogValidationTest {
     }
 
     @Test
-    public void impossibleToSetBirthdayAsNow() {
+    public void impossibleToSetBirthdayAsCurrentDate() {
         Dog dog = new Dog("Tuzik", 15, 8, LocalDate.now());
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
-        assertEquals(0, violations.size());
+        assertEquals(1, violations.size());
+        assertEquals("Date of birth must be before NOW", violations.iterator().next().getMessage());
     }
 
     @Test
-    public void impossibleToSetBirthdayAsFutureTime() {
+    public void impossibleToSetBirthdayAsFutureDate() {
         Dog dog = new Dog("Tuzik", 15, 8, LocalDate.of(2022, Month.OCTOBER, 26));
 
         Set<ConstraintViolation<Dog>> violations = validator.validate(dog);
-        assertEquals(0, violations.size());
+        assertEquals(1, violations.size());
+        assertEquals("Date of birth must be before NOW", violations.iterator().next().getMessage());
     }
 }

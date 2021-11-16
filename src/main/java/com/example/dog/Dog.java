@@ -4,40 +4,35 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE;
 
-//@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE)
-@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = ANY, isGetterVisibility = ANY)
+@JsonAutoDetect(fieldVisibility = ANY, getterVisibility = NONE, isGetterVisibility = NONE)
 public class Dog {
 
     private int id;
 
-    @NotNull
+    @NotNull(message = "Name cannot be null")
     @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters long")
     private String name;
 
-    @NotNull
-    @Min(value = 0, message = "The height must be greater than 0")
+    @Min(value = 1, message = "Height must be greater than 0")
     private int height;
 
-    @NotNull
-    @Min(value = 0, message = "The weight must be greater than 0")
+    @Min(value = 1, message = "Weight must be greater than 0")
     private int weight;
 
-    @Past(message = "Birthday must be before NOW.")
-    private LocalDate birthday;
+    @Past(message = "Date of birth must be before NOW")
+    private LocalDate dateOfBirth;
 
     public Dog() {}
 
-    public Dog(String name, int height, int weight, LocalDate birthday) {
+    public Dog(String name, int height, int weight, LocalDate dateOfBirth) {
         this.name = name;
         this.weight = weight;
         this.height = height;
-        this.birthday = birthday;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public int getId() {
