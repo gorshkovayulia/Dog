@@ -7,8 +7,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.unitils.reflectionassert.ReflectionAssert;
 
-import java.time.LocalDate;
-import java.time.Month;
+import java.time.*;
 
 public class DogControllerRestAssuredTest {
 
@@ -20,9 +19,11 @@ public class DogControllerRestAssuredTest {
     @Test
     public void possibleToGetExistingDog() {
         Dog dog = new Dog("Tuzik", 24, 8,
-                LocalDate.of(2021, Month.OCTOBER, 26));
+                ZonedDateTime.of(
+                        LocalDateTime.of(2021, Month.OCTOBER, 26, 4, 59),
+                        ZoneId.of("Europe/Moscow")));
 
-        Dog fromPost = postDog(dog);
+        Dog fromPost = getDogFromPostRequest(dog);
         Dog fromDog = getDog(fromPost.getId());
 
         dog.setId(fromDog.getId());
@@ -40,20 +41,26 @@ public class DogControllerRestAssuredTest {
     @Test
     public void possibleToUpdateExistingDog() {
         Dog dog = new Dog("Tuzik", 24, 8,
-                LocalDate.of(2021, Month.OCTOBER, 26));
+                ZonedDateTime.of(
+                        LocalDateTime.of(2021, Month.OCTOBER, 26, 5, 59),
+                        ZoneId.of("Europe/Moscow")));
         Dog dog2 = new Dog("Sharik", 15, 10,
-                LocalDate.of(2020, Month.MARCH, 15));
+                ZonedDateTime.of(
+                        LocalDateTime.of(2021, Month.OCTOBER, 26, 6, 59),
+                        ZoneId.of("Europe/Moscow")));
 
-        Dog postDog = postDog(dog);
+        Dog postDog = getDogFromPostRequest(dog);
         Dog putDog = getDogFromPutRequest(postDog.getId(), dog2);
-        dog2.setId(putDog.getId());
+        dog2.setId(postDog.getId());
         ReflectionAssert.assertReflectionEquals(dog2, putDog);
     }
 
     @Test
     public void returns404_ifUpdatingNotExistingDog() {
         Dog dog = new Dog("Tuzik", 24, 8,
-                LocalDate.of(2021, Month.OCTOBER, 26));
+                ZonedDateTime.of(
+                        LocalDateTime.of(2021, Month.OCTOBER, 26, 7, 59),
+                        ZoneId.of("Europe/Moscow")));
 
         Response resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
         Assert.assertEquals(resp.getStatusCode(), 404);
@@ -61,11 +68,15 @@ public class DogControllerRestAssuredTest {
 
     @Test
     public void possibleToDeleteExistingDog() {
-        Dog dog = postDog(new Dog("Scooby-Doo", 80, 3,
-                LocalDate.of(2019, Month.OCTOBER, 10)));
+        Dog dog = getDogFromPostRequest(new Dog("Scooby-Doo", 80, 3,
+                ZonedDateTime.of(
+                        LocalDateTime.of(2021, Month.OCTOBER, 26, 8, 59),
+                        ZoneId.of("Europe/Moscow"))));
 
         Dog fromDelete = getDogFromDeleteRequest(dog.getId());
         ReflectionAssert.assertReflectionEquals(dog, fromDelete);
+        Response resp = getDogAndReturn(fromDelete.getId());
+        Assert.assertEquals(resp.getStatusCode(), 404);
     }
 
     @Test
@@ -84,12 +95,16 @@ public class DogControllerRestAssuredTest {
         return RestAssured.get("/dog/{id}", id).thenReturn();
     }
 
-    private static Dog postDog(Dog dog) {
-        Response resp = RestAssured.
-                given().contentType("application/json").body(dog).
-                when().post("/dog");
+    private static Dog getDogFromPostRequest(Dog dog) {
+        Response resp = postDogAndReturn(dog);
         Assert.assertEquals(resp.getStatusCode(), 200);
         return resp.as(Dog.class);
+    }
+
+    private static Response postDogAndReturn(Dog dog) {
+        return RestAssured.
+                given().contentType("application/json").body(dog).
+                when().post("/dog").thenReturn();
     }
 
     private static Dog getDogFromPutRequest(int id, Dog dog) {
