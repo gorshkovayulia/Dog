@@ -2,14 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
-<!--       default-autowire="byType">-->
-
-<!--    <bean class="com.example.dog.HouseConfig" />-->
-
-<!--    <bean class="com.example.dog.Dog">-->
-<!--        <constructor-arg ref="house" />-->
-<!--    </bean>-->
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <bean class="com.example.dog.DogController">
     </bean>
