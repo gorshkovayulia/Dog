@@ -1,5 +1,6 @@
-package com.example.dog;
+package com.example.dog.controller;
 
+import com.example.dog.model.Dog;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
@@ -24,10 +25,10 @@ public class DogControllerRestAssuredTest {
                         ZoneId.of("Europe/Moscow")));
 
         Dog fromPost = getDogFromPostRequest(dog);
-        Dog fromDog = getDog(fromPost.getId());
+        Dog fromGet = getDog(fromPost.getId());
 
-        dog.setId(fromDog.getId());
-        ReflectionAssert.assertReflectionEquals(dog, fromDog);
+        dog.setId(fromGet.getId());
+        ReflectionAssert.assertReflectionEquals(dog, fromGet);
         ReflectionAssert.assertReflectionEquals(dog, fromPost);
     }
 
@@ -49,10 +50,10 @@ public class DogControllerRestAssuredTest {
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 6, 59),
                         ZoneId.of("Europe/Moscow")));
 
-        Dog postDog = getDogFromPostRequest(dog);
-        Dog putDog = getDogFromPutRequest(postDog.getId(), dog2);
-        dog2.setId(postDog.getId());
-        ReflectionAssert.assertReflectionEquals(dog2, putDog);
+        Dog fromPost = getDogFromPostRequest(dog);
+        Dog fromPut = getDogFromPutRequest(fromPost.getId(), dog2);
+        dog2.setId(fromPost.getId());
+        ReflectionAssert.assertReflectionEquals(dog2, fromPut);
     }
 
     @Test
@@ -68,13 +69,13 @@ public class DogControllerRestAssuredTest {
 
     @Test
     public void possibleToDeleteExistingDog() {
-        Dog dog = getDogFromPostRequest(new Dog("Scooby-Doo", 80, 3,
+        Dog fromPost = getDogFromPostRequest(new Dog("Scooby-Doo", 80, 3,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 8, 59),
                         ZoneId.of("Europe/Moscow"))));
 
-        Dog fromDelete = getDogFromDeleteRequest(dog.getId());
-        ReflectionAssert.assertReflectionEquals(dog, fromDelete);
+        Dog fromDelete = getDogFromDeleteRequest(fromPost.getId());
+        ReflectionAssert.assertReflectionEquals(fromPost, fromDelete);
         Response resp = getDogAndReturn(fromDelete.getId());
         Assert.assertEquals(resp.getStatusCode(), 404);
     }

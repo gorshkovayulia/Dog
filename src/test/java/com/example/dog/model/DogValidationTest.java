@@ -1,4 +1,4 @@
-package com.example.dog;
+package com.example.dog.model;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

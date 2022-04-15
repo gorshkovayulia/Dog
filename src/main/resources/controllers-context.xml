@@ -6,8 +6,24 @@
        http://www.springframework.org/schema/mvc
        https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <bean class="com.example.dog.DogController">
+    <bean class="com.example.dog.controller.DogController">
+        <constructor-arg ref="jdbcDogDao"/>
     </bean>
+
+    <bean id="inMemoryDogDao" class="com.example.dog.dao.InMemoryDogDAO">
+    </bean>
+
+    <bean id="jdbcDogDao" class="com.example.dog.dao.JdbcDogDAO" primary="true">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean id = "dataSource" class = "org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name = "driverClassName" value = "org.h2.Driver"/>
+        <property name = "url" value = "jdbc:h2:mem://localhost:8081/;DB_CLOSE_DELAY=-1"/>
+        <property name = "username" value = "admin"/>
+        <property name = "password" value = "admin"/>
+    </bean>
+
     <mvc:annotation-driven>
         <mvc:message-converters>
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>

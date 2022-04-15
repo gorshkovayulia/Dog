@@ -1,7 +1,12 @@
-package com.example.dog;
+package com.example.dog.controller;
 
+import com.example.dog.dao.JdbcDogDAO;
+import com.example.dog.model.Dog;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.context.ContextConfiguration;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -16,7 +21,12 @@ public class DogControllerRestAssuredMockMvcTest {
 
     @BeforeClass
     public void setUp() {
-        RestAssuredMockMvc.standaloneSetup(new DogController());
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.h2.Driver");
+        dataSource.setUrl("jdbc:h2:mem://localhost:8081/;DB_CLOSE_DELAY=-1");
+        dataSource.setUsername("admin");
+        dataSource.setPassword("admin");
+        RestAssuredMockMvc.standaloneSetup(new DogController(new JdbcDogDAO(dataSource)));
     }
 
     @Test
@@ -27,10 +37,10 @@ public class DogControllerRestAssuredMockMvcTest {
                         ZoneId.of("Europe/Moscow")));
 
         Dog fromPost = getDogFromPostRequest(dog);
-        Dog fromDog = getDog(fromPost.getId());
+        Dog fromGet = getDog(fromPost.getId());
 
-        dog.setId(fromDog.getId());
-        ReflectionAssert.assertReflectionEquals(dog, fromDog);
+        dog.setId(fromGet.getId());
+        ReflectionAssert.assertReflectionEquals(dog, fromGet);
         ReflectionAssert.assertReflectionEquals(dog, fromPost);
     }
 
@@ -52,10 +62,10 @@ public class DogControllerRestAssuredMockMvcTest {
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 6, 59),
                         ZoneId.of("Europe/Moscow")));
 
-        Dog postDog = getDogFromPostRequest(dog);
-        Dog putDog = getDogFromPutRequest(postDog.getId(), dog2);
-        dog2.setId(postDog.getId());
-        ReflectionAssert.assertReflectionEquals(dog2, putDog);
+        Dog fromPost = getDogFromPostRequest(dog);
+        Dog fromPut = getDogFromPutRequest(fromPost.getId(), dog2);
+        dog2.setId(fromPost.getId());
+        ReflectionAssert.assertReflectionEquals(dog2, fromPut);
     }
 
     @Test
@@ -71,14 +81,14 @@ public class DogControllerRestAssuredMockMvcTest {
 
     @Test
     public void possibleToDeleteExistingDog() {
-        Dog dog = getDogFromPostRequest(new Dog("Scooby-Doo", 80, 3,
+        Dog fromPost = getDogFromPostRequest(new Dog("Scooby-Doo", 80, 3,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 8, 59),
                         ZoneId.of("Europe/Moscow"))));
 
-        Dog fromDelete = getDogFromDeleteRequest(dog.getId());
-        ReflectionAssert.assertReflectionEquals(dog, fromDelete);
-        MockMvcResponse resp = getDogAndReturn(dog.getId());
+        Dog fromDelete = getDogFromDeleteRequest(fromPost.getId());
+        ReflectionAssert.assertReflectionEquals(fromPost, fromDelete);
+        MockMvcResponse resp = getDogAndReturn(fromPost.getId());
         Assert.assertEquals(resp.getStatusCode(), 404);
     }
 
@@ -108,8 +118,8 @@ public class DogControllerRestAssuredMockMvcTest {
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 11, 59),
                         ZoneId.of("Europe/Moscow")));
 
-        Dog postDog = getDogFromPostRequest(dog);
-        MockMvcResponse resp = updateDogAndReturn(postDog.getId(), dog2);
+        Dog fromPost = getDogFromPostRequest(dog);
+        MockMvcResponse resp = updateDogAndReturn(fromPost.getId(), dog2);
         Assert.assertEquals(resp.getStatusCode(), 400);
     }
 
