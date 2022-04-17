@@ -28,9 +28,8 @@ public class InMemoryDogDAO implements DogDAO {
         Dog newValue = dogs.computeIfPresent(id, (k, v)-> dog);
         if (newValue != null) {
             newValue.setId(id);
-            return newValue;
         }
-        return null;
+        return newValue;
     }
 
     @Override

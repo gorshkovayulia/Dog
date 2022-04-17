@@ -31,10 +31,7 @@ public class DogControllerRestAssuredMockMvcTest {
 
     @Test
     public void possibleToGetExistingDog() {
-        Dog dog = new Dog("Tuzik", 24, 8,
-                ZonedDateTime.of(
-                        LocalDateTime.of(2021, Month.OCTOBER, 26, 4, 59),
-                        ZoneId.of("Europe/Moscow")));
+        Dog dog = new Dog("Tuzik", 24, 8, null);
 
         Dog fromPost = getDogFromPostRequest(dog);
         Dog fromGet = getDog(fromPost.getId());

@@ -39,7 +39,7 @@ public class JdbcDogDAO implements DogDAO {
         try (Connection conn = dataSource.getConnection()) {
             statement = conn.createStatement();
             resultSet = statement.executeQuery("select id, name, height, weight, birthday from dog where id = " + id);
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 returnedDog = new Dog();
                 returnedDog.setId(resultSet.getInt("id"));
                 returnedDog.setName(resultSet.getString("name"));
@@ -58,21 +58,13 @@ public class JdbcDogDAO implements DogDAO {
         Statement statement;
         try (Connection conn = dataSource.getConnection()) {
             statement = conn.createStatement();
-            ZonedDateTime date = dog.getDateOfBirth();
-            String formattedDate = date.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss VV"));
-            String dateString = formattedDate == null ? null : "'" + formattedDate + "'";
-
-            int affectedRows = statement.executeUpdate("insert into dog (name, height, weight, birthday) values ("
-                    + "'" + dog.getName() + "', " + dog.getHeight() + ", " + dog.getWeight() + ", " + dateString + ")",
+            statement.executeUpdate("insert into dog (name, height, weight, birthday) values (" + "'" + dog.getName() + "', "
+                            + dog.getHeight() + ", " + dog.getWeight() + "," + getDateString(dog.getDateOfBirth()) + ")",
                     Statement.RETURN_GENERATED_KEYS);
-            if (affectedRows == 0) {
-                throw new SQLException("Creating dog failed.");
-            }
+
             try (ResultSet keys = statement.getGeneratedKeys()) {
                 if (keys.next()) {
                     dog.setId(keys.getInt(1));
-                } else {
-                    throw new SQLException("Creating dog failed.");
                 }
             }
         } catch (SQLException e) {
@@ -87,13 +79,9 @@ public class JdbcDogDAO implements DogDAO {
         Dog updatedDog;
         try (Connection conn = dataSource.getConnection()) {
             statement = conn.createStatement();
-            ZonedDateTime date = dog.getDateOfBirth();
-            String formattedDate = date.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss VV"));
-            String dateString = formattedDate == null ? null : "'" + formattedDate + "'";
-
             int affectedRows = statement.executeUpdate("update dog set name = " + "'" + dog.getName() + "'" +
                     ", height = " + dog.getHeight() + ", weight = " + dog.getWeight() +
-                    ", birthday = " + dateString + " where id = " + id);
+                    ", birthday = " + getDateString(dog.getDateOfBirth()) + " where id = " + id);
             if (affectedRows == 0) {
                 return null;
             }
@@ -107,12 +95,11 @@ public class JdbcDogDAO implements DogDAO {
     @Override
     public Dog remove(int id) {
         Statement statement;
-        Dog removedDog;
+        Dog removedDog = get(id);
         try (Connection conn = dataSource.getConnection()) {
             statement = conn.createStatement();
-            removedDog = get(id);
-            int rows = statement.executeUpdate("delete from dog " + "where id = " + id);
-            if (rows == 0) {
+            int affectedRows = statement.executeUpdate("delete from dog " + "where id = " + id);
+            if (affectedRows == 0) {
                 return null;
             }
         } catch (SQLException e) {
@@ -123,5 +110,9 @@ public class JdbcDogDAO implements DogDAO {
 
     private static ZonedDateTime getDateTime(Timestamp timestamp) {
         return timestamp != null ? ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneId.systemDefault()) : null;
+    }
+
+    private String getDateString(ZonedDateTime time) {
+        return time == null ? null : "'" + time.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss VV")) + "'";
     }
 }
