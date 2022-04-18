@@ -13,6 +13,8 @@ import java.time.format.DateTimeFormatter;
 
 public class JdbcDogDAO implements DogDAO {
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss VV");
+
     private DriverManagerDataSource dataSource;
 
     public JdbcDogDAO(DriverManagerDataSource dataSource) {
@@ -113,6 +115,6 @@ public class JdbcDogDAO implements DogDAO {
     }
 
     private String getDateString(ZonedDateTime time) {
-        return time == null ? null : "'" + time.format(DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss VV")) + "'";
+        return time == null ? null : "'" + time.format(DATE_TIME_FORMATTER) + "'";
     }
 }
