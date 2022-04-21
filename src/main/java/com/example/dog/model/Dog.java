@@ -30,9 +30,18 @@ public class Dog {
     @Past(message = "Date of birth must be before NOW, was ${validatedValue}")
     private ZonedDateTime dateOfBirth;
 
-    public Dog() {}
+    public Dog() {
+    }
 
     public Dog(String name, int height, int weight, ZonedDateTime dateOfBirth) {
+        this.name = name;
+        this.weight = weight;
+        this.height = height;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Dog(int id, String name, int height, int weight, ZonedDateTime dateOfBirth) {
+        this.id = id;
         this.name = name;
         this.weight = weight;
         this.height = height;
@@ -51,31 +60,27 @@ public class Dog {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getHeight() {
         return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
     }
 
     public int getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
-    }
-
     public ZonedDateTime getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(ZonedDateTime dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Dog dog = (Dog) obj;
+        return id == dog.id && name.equals(dog.name) && height == dog.height && weight == dog.weight && dateOfBirth == dog.dateOfBirth;
     }
 }

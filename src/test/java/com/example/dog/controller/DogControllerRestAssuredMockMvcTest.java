@@ -1,37 +1,39 @@
 package com.example.dog.controller;
 
-import com.example.dog.dao.JdbcDogDAO;
 import com.example.dog.model.Dog;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import org.unitils.reflectionassert.ReflectionAssert;
 
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
-public class DogControllerRestAssuredMockMvcTest {
+@ContextConfiguration(locations={"classpath:/controllers-context.xml"})
+public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringContextTests {
+
+    @Autowired
+    private DogController dogController;
 
     @BeforeClass
     public void setUp() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:mem://localhost:8081/;DB_CLOSE_DELAY=-1");
-        dataSource.setUsername("admin");
-        dataSource.setPassword("admin");
-        RestAssuredMockMvc.standaloneSetup(new DogController(new JdbcDogDAO(dataSource)));
+        RestAssuredMockMvc.standaloneSetup(dogController);
     }
 
     @Test
     public void possibleToGetExistingDog() {
-        Dog dog = new Dog("Tuzik", 24, 8, null);
+        Dog dog = new Dog("Tuzik", 24, 8,
+                ZonedDateTime.of(LocalDateTime.of(2021, Month.OCTOBER, 26, 5, 59),
+                ZoneId.of("Europe/Moscow")));
 
         Dog fromPost = getDogFromPostRequest(dog);
         Dog fromGet = getDog(fromPost.getId());

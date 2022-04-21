@@ -2,26 +2,31 @@ package com.example.dog.dao;
 
 import com.example.dog.model.Dog;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class JdbcDogDAO implements DogDAO {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss VV");
+    private static final String SQL_SELECT_DOG =
+            "select id, name, height, weight, birthday from dog where id = ?";
+    private static final String SQL_INSERT_DOG =
+            "insert into dog (name, height, weight, birthday) values (?, ?, ?, ?)";
+    private static final String SQL_UPDATE_DOG =
+            "update dog set name = ?, height = ?, weight = ?, birthday = ? where id = ?";
+    private static final String SQL_DELETE_DOG =
+            "delete from dog where id = ?";
 
-    private DriverManagerDataSource dataSource;
+    private final DriverManagerDataSource dataSource;
 
     public JdbcDogDAO(DriverManagerDataSource dataSource) {
         this.dataSource = dataSource;
         try (Connection conn = dataSource.getConnection()) {
             Statement statement = conn.createStatement();
-            statement.execute("" +
+            statement.execute(
                     "CREATE TABLE DOG (" +
                     "ID INTEGER PRIMARY KEY AUTO_INCREMENT, " +
                     "NAME VARCHAR (255) NOT NULL, " +
@@ -35,19 +40,17 @@ public class JdbcDogDAO implements DogDAO {
 
     @Override
     public Dog get(int id) {
-        Statement statement;
+        PreparedStatement statement;
         ResultSet resultSet;
         Dog returnedDog = null;
         try (Connection conn = dataSource.getConnection()) {
-            statement = conn.createStatement();
-            resultSet = statement.executeQuery("select id, name, height, weight, birthday from dog where id = " + id);
+            statement = conn.prepareStatement(SQL_SELECT_DOG);
+            statement.setInt(1, id);
+            resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                returnedDog = new Dog();
-                returnedDog.setId(resultSet.getInt("id"));
-                returnedDog.setName(resultSet.getString("name"));
-                returnedDog.setHeight(resultSet.getInt("height"));
-                returnedDog.setWeight(resultSet.getInt("weight"));
-                returnedDog.setDateOfBirth(getDateTime(resultSet.getTimestamp("birthday")));
+                returnedDog = new Dog(resultSet.getInt("id"), resultSet.getString("name"),
+                        resultSet.getInt("height"), resultSet.getInt("weight"),
+                        getDateTime(resultSet.getTimestamp("birthday")) );
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -57,13 +60,14 @@ public class JdbcDogDAO implements DogDAO {
 
     @Override
     public Dog add(Dog dog) {
-        Statement statement;
+        PreparedStatement statement;
         try (Connection conn = dataSource.getConnection()) {
-            statement = conn.createStatement();
-            statement.executeUpdate("insert into dog (name, height, weight, birthday) values (" + "'" + dog.getName() + "', "
-                            + dog.getHeight() + ", " + dog.getWeight() + "," + getDateString(dog.getDateOfBirth()) + ")",
-                    Statement.RETURN_GENERATED_KEYS);
-
+            statement = conn.prepareStatement(SQL_INSERT_DOG, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, dog.getName());
+            statement.setInt(2, dog.getHeight());
+            statement.setInt(3, dog.getWeight());
+            statement.setString(4, getDateString(dog.getDateOfBirth()));
+            statement.executeUpdate();
             try (ResultSet keys = statement.getGeneratedKeys()) {
                 if (keys.next()) {
                     dog.setId(keys.getInt(1));
@@ -77,13 +81,16 @@ public class JdbcDogDAO implements DogDAO {
 
     @Override
     public Dog update(int id, Dog dog) {
-        Statement statement;
+        PreparedStatement statement;
         Dog updatedDog;
         try (Connection conn = dataSource.getConnection()) {
-            statement = conn.createStatement();
-            int affectedRows = statement.executeUpdate("update dog set name = " + "'" + dog.getName() + "'" +
-                    ", height = " + dog.getHeight() + ", weight = " + dog.getWeight() +
-                    ", birthday = " + getDateString(dog.getDateOfBirth()) + " where id = " + id);
+            statement = conn.prepareStatement(SQL_UPDATE_DOG);
+            statement.setString(1, dog.getName());
+            statement.setInt(2, dog.getHeight());
+            statement.setInt(3, dog.getWeight());
+            statement.setString(4, getDateString(dog.getDateOfBirth()));
+            statement.setInt(5, id);
+            int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
                 return null;
             }
@@ -96,11 +103,12 @@ public class JdbcDogDAO implements DogDAO {
 
     @Override
     public Dog remove(int id) {
-        Statement statement;
+        PreparedStatement statement;
         Dog removedDog = get(id);
         try (Connection conn = dataSource.getConnection()) {
-            statement = conn.createStatement();
-            int affectedRows = statement.executeUpdate("delete from dog " + "where id = " + id);
+            statement = conn.prepareStatement(SQL_DELETE_DOG);
+            statement.setInt(1, id);
+            int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
                 return null;
             }
@@ -115,6 +123,6 @@ public class JdbcDogDAO implements DogDAO {
     }
 
     private String getDateString(ZonedDateTime time) {
-        return time == null ? null : "'" + time.format(DATE_TIME_FORMATTER) + "'";
+        return time == null ? null : time.format(DATE_TIME_FORMATTER);
     }
 }
