@@ -30,7 +30,7 @@ public class JdbcDogDAOTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void possibleToSaveDogWithSQLInjectedName() {
-        Dog dog = new Dog("'a'='a'", 24, 8,
+        Dog dog = new Dog("' blah", 24, 8,
                 ZonedDateTime.of(LocalDateTime.of(2020, Month.OCTOBER, 26, 4, 59),
                         ZoneId.of("Europe/Moscow")));
         Assert.assertEquals(jdbcDogDao.add(dog), dog);
