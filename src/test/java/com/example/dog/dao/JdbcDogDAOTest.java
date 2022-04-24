@@ -12,6 +12,8 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+
 @ContextConfiguration(locations={"classpath:/controllers-context.xml"})
 public class JdbcDogDAOTest extends AbstractTestNGSpringContextTests {
 
@@ -19,13 +21,11 @@ public class JdbcDogDAOTest extends AbstractTestNGSpringContextTests {
     private JdbcDogDAO jdbcDogDao;
 
     @Test
-    public void possibleToSaveNameWithMaxLength() {
+    public void possibleToSaveNameWithMaxValues() {
         Dog dog = new Dog(
                 "QWERTYUIOPASDFGHJKLZXCVBNMQWERQWERTYUIOPASDFGHJKLZXCVBNMQWERQWERTYUIOPASDFGHJKLZXCVBNMQWERTYUIOPASDFG",
-                24, 8,
-                ZonedDateTime.of(LocalDateTime.of(2020, Month.OCTOBER, 26, 4, 59),
-                        ZoneId.of("Europe/Moscow")));
-        Assert.assertEquals(jdbcDogDao.add(dog), dog);
+                Integer.MAX_VALUE, Integer.MAX_VALUE, ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Moscow")));
+        assertReflectionEquals(jdbcDogDao.add(dog), dog);
     }
 
     @Test
@@ -33,14 +33,14 @@ public class JdbcDogDAOTest extends AbstractTestNGSpringContextTests {
         Dog dog = new Dog("' blah", 24, 8,
                 ZonedDateTime.of(LocalDateTime.of(2020, Month.OCTOBER, 26, 4, 59),
                         ZoneId.of("Europe/Moscow")));
-        Assert.assertEquals(jdbcDogDao.add(dog), dog);
+        assertReflectionEquals(jdbcDogDao.add(dog), dog);
     }
 
     @Test
     public void possibleToSaveDogWithNullBirthday() {
         Dog dog = new Dog("Sharik", 24, 8, null);
         jdbcDogDao.add(dog);
-        Assert.assertEquals(jdbcDogDao.get(dog.getId()), dog);
+        assertReflectionEquals(jdbcDogDao.get(dog.getId()), dog);
     }
 
     @Test
@@ -49,8 +49,8 @@ public class JdbcDogDAOTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void nullIsReturnedInCaseUpdatingOfNotExistingDog() {
-        Assert.assertNull(jdbcDogDao.update(Integer.MAX_VALUE, new Dog("Sharik", 24, 8,
+    public void IllegalArgumentExceptionIsThrownInCaseUpdatingOfNotExistingDog() {
+        Assert.assertThrows(IllegalArgumentException.class, () -> jdbcDogDao.update(Integer.MAX_VALUE, new Dog("Sharik", 24, 8,
                 ZonedDateTime.of(LocalDateTime.of(2020, Month.OCTOBER, 26, 4, 59),
                         ZoneId.of("Europe/Moscow")))));
     }

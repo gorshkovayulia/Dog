@@ -71,16 +71,4 @@ public class Dog {
     public ZonedDateTime getDateOfBirth() {
         return dateOfBirth;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        Dog dog = (Dog) obj;
-        return id == dog.id && name.equals(dog.name) && height == dog.height && weight == dog.weight && dateOfBirth == dog.dateOfBirth;
-    }
 }

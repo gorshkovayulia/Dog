@@ -34,7 +34,7 @@ public class DogController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<Dog> updateDog(@PathVariable("id") int id, @Valid @RequestBody Dog dog) {
         Dog addedDog = dao.update(id, dog);
-        if(addedDog == null) {
+        if (addedDog == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(addedDog, HttpStatus.OK);

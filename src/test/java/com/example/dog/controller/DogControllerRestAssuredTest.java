@@ -57,14 +57,15 @@ public class DogControllerRestAssuredTest {
     }
 
     @Test
-    public void returns404_ifUpdatingNotExistingDog() {
+    public void returns500_ifUpdatingNotExistingDog() {
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 7, 59),
                         ZoneId.of("Europe/Moscow")));
 
         Response resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
-        Assert.assertEquals(resp.getStatusCode(), 404);
+        Assert.assertEquals(resp.getStatusCode(), 500);
+        Assert.assertTrue(resp.getBody().asString().contains("Dog with " + Integer.MAX_VALUE + " id was not found!"));
     }
 
     @Test

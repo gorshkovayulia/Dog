@@ -50,7 +50,7 @@ public class JdbcDogDAO implements DogDAO {
             if (resultSet.next()) {
                 returnedDog = new Dog(resultSet.getInt("id"), resultSet.getString("name"),
                         resultSet.getInt("height"), resultSet.getInt("weight"),
-                        getDateTime(resultSet.getTimestamp("birthday")) );
+                        getDateTime(resultSet.getTimestamp("birthday")));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -92,7 +92,7 @@ public class JdbcDogDAO implements DogDAO {
             statement.setInt(5, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                return null;
+                throw new IllegalArgumentException("Dog with " + id + " id was not found!");
             }
             updatedDog = get(id);
         } catch (SQLException e) {
