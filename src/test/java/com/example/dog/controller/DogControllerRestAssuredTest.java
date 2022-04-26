@@ -64,8 +64,8 @@ public class DogControllerRestAssuredTest {
                         ZoneId.of("Europe/Moscow")));
 
         Response resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
-        Assert.assertEquals(resp.getStatusCode(), 500);
-        Assert.assertTrue(resp.getBody().asString().contains("Dog with " + Integer.MAX_VALUE + " id was not found!"));
+        Assert.assertEquals(resp.getStatusCode(), 400);
+        Assert.assertEquals(resp.getBody().asString(), "\"" + "Dog with id=" + Integer.MAX_VALUE + " was not found!" + "\"");
     }
 
     @Test

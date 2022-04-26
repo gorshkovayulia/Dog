@@ -6,6 +6,7 @@ import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.web.util.NestedServletException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -69,15 +70,14 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
     }
 
     @Test
-    public void returns404_ifUpdatingNotExistingDog() {
+    public void returns400_ifUpdatingNotExistingDog() throws Throwable {
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 7, 59),
                         ZoneId.of("Europe/Moscow")));
-//        MockMvcResponse resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
-//        Assert.assertThrows(IllegalArgumentException.class, () -> updateDogAndReturn(Integer.MAX_VALUE, dog));
-//        Assert.assertEquals(resp.getStatusCode(), 500);
-//        Assert.assertTrue(resp.getBody().asString().contains("Dog with " + Integer.MAX_VALUE + " id was not found!"));
+        MockMvcResponse resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
+        Assert.assertEquals(resp.getStatusCode(), 400);
+        Assert.assertEquals(resp.getBody().asString(), "Dog with id=" + Integer.MAX_VALUE + " was not found!");
     }
 
     @Test

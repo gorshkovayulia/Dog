@@ -32,12 +32,13 @@ public class DogController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Dog> updateDog(@PathVariable("id") int id, @Valid @RequestBody Dog dog) {
-        Dog addedDog = dao.update(id, dog);
-        if (addedDog == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> updateDog(@PathVariable("id") int id, @Valid @RequestBody Dog dog) {
+        try {
+            Dog addedDog = dao.update(id, dog);
+            return new ResponseEntity<>(addedDog, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return new ResponseEntity<>(addedDog, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
