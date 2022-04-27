@@ -26,7 +26,7 @@ public class InMemoryDogDAO implements DogDAO {
     @Override
     public Dog update(int id, Dog dog) {
         if (!dogs.containsKey(id)) {
-            throw new IllegalArgumentException("Dog with id=" + id + " was not found!");
+            throw new ObjectNotFoundException("Dog with id=" + id + " was not found!");
         }
         dog.setId(id);
         dogs.put(id, dog);

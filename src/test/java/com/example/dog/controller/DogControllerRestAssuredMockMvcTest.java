@@ -70,13 +70,13 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
     }
 
     @Test
-    public void returns400_ifUpdatingNotExistingDog() throws Throwable {
+    public void returns404_ifUpdatingNotExistingDog() {
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 7, 59),
                         ZoneId.of("Europe/Moscow")));
         MockMvcResponse resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
-        Assert.assertEquals(resp.getStatusCode(), 400);
+        Assert.assertEquals(resp.getStatusCode(), 404);
         Assert.assertEquals(resp.getBody().asString(), "Dog with id=" + Integer.MAX_VALUE + " was not found!");
     }
 

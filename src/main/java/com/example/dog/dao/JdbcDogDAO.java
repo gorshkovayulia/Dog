@@ -92,7 +92,7 @@ public class JdbcDogDAO implements DogDAO {
             statement.setInt(5, id);
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
-                throw new IllegalArgumentException("Dog with id=" + id + " was not found!");
+                throw new ObjectNotFoundException("Dog with id=" + id + " was not found!");
             }
             updatedDog = get(id);
         } catch (SQLException e) {
