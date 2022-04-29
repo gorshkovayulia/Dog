@@ -4,9 +4,12 @@ import com.example.dog.model.Dog;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.web.util.NestedServletException;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -18,7 +21,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
-import static org.testng.Assert.assertThrows;
 
 @ContextConfiguration(locations={"classpath:/controllers-context.xml"})
 public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringContextTests {
@@ -28,7 +30,12 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
 
     @BeforeClass
     public void setUp() {
-        RestAssuredMockMvc.standaloneSetup(dogController);
+        HandlerExceptionResolver handlerExceptionResolver = initGlobalExceptionHandlerResolvers();
+
+        RestAssuredMockMvc.standaloneSetup(
+                MockMvcBuilders
+                        .standaloneSetup(dogController)
+                        .setHandlerExceptionResolvers(handlerExceptionResolver));
     }
 
     @Test
@@ -164,4 +171,19 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
     private static MockMvcResponse deleteDogAndReturn(int id) {
         return given().when().delete("/dog/{id}", id).thenReturn();
     }
+
+    /**
+     * Initializes GlobalControllerExceptionHandler advice using the StaticApplicationContext with the single bean.
+     * @return HandlerExceptionResolver instantiated based on the GlobalControllerExceptionHandler
+     */
+    private HandlerExceptionResolver initGlobalExceptionHandlerResolvers() {
+        StaticApplicationContext applicationContext = new StaticApplicationContext();
+        applicationContext.registerSingleton("exceptionHandler", GlobalControllerExceptionHandler.class);
+
+        WebMvcConfigurationSupport webMvcConfigurationSupport = new WebMvcConfigurationSupport();
+        webMvcConfigurationSupport.setApplicationContext(applicationContext);
+
+        return webMvcConfigurationSupport.handlerExceptionResolver();
+    }
+
 }

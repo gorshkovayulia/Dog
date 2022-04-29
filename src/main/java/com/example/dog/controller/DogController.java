@@ -1,7 +1,6 @@
 package com.example.dog.controller;
 
 import com.example.dog.dao.DogDAO;
-import com.example.dog.dao.ObjectNotFoundException;
 import com.example.dog.model.Dog;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +31,10 @@ public class DogController {
         return dao.add(dog);
     }
 
-    @PutMapping(path = "/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateDog(@PathVariable("id") int id, @Valid @RequestBody Dog dog) {
-        try {
-            Dog addedDog = dao.update(id, dog);
-            return new ResponseEntity<>(addedDog, HttpStatus.OK);
-        } catch (ObjectNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        Dog addedDog = dao.update(id, dog);
+        return new ResponseEntity<>(addedDog, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
