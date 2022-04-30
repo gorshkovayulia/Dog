@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.testng.Assert;
@@ -23,19 +26,15 @@ import java.time.ZonedDateTime;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
 @ContextConfiguration(locations={"classpath:/controllers-context.xml"})
+@WebAppConfiguration
 public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
-    private DogController dogController;
+    private WebApplicationContext context;
 
     @BeforeClass
     public void setUp() {
-        HandlerExceptionResolver handlerExceptionResolver = initGlobalExceptionHandlerResolvers();
-
-        RestAssuredMockMvc.standaloneSetup(
-                MockMvcBuilders
-                        .standaloneSetup(dogController)
-                        .setHandlerExceptionResolvers(handlerExceptionResolver));
+        RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(context).build());
     }
 
     @Test
@@ -84,7 +83,7 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
                         ZoneId.of("Europe/Moscow")));
         MockMvcResponse resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
         Assert.assertEquals(resp.getStatusCode(), 404);
-        Assert.assertEquals(resp.getBody().asString(), "Dog with id=" + Integer.MAX_VALUE + " was not found!");
+        Assert.assertEquals(resp.getBody().asString(), "\"" + "Dog with id=" + Integer.MAX_VALUE + " was not found!" + "\"");
     }
 
     @Test
@@ -170,20 +169,6 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
 
     private static MockMvcResponse deleteDogAndReturn(int id) {
         return given().when().delete("/dog/{id}", id).thenReturn();
-    }
-
-    /**
-     * Initializes GlobalControllerExceptionHandler advice using the StaticApplicationContext with the single bean.
-     * @return HandlerExceptionResolver instantiated based on the GlobalControllerExceptionHandler
-     */
-    private HandlerExceptionResolver initGlobalExceptionHandlerResolvers() {
-        StaticApplicationContext applicationContext = new StaticApplicationContext();
-        applicationContext.registerSingleton("exceptionHandler", GlobalControllerExceptionHandler.class);
-
-        WebMvcConfigurationSupport webMvcConfigurationSupport = new WebMvcConfigurationSupport();
-        webMvcConfigurationSupport.setApplicationContext(applicationContext);
-
-        return webMvcConfigurationSupport.handlerExceptionResolver();
     }
 
 }
