@@ -3,6 +3,7 @@ package com.example.dog.controller;
 import com.example.dog.model.Dog;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,10 +32,13 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
 
     @Autowired
     private WebApplicationContext context;
+    @Autowired
+    private Flyway flyway;
 
     @BeforeClass
     public void setUp() {
         RestAssuredMockMvc.mockMvc(MockMvcBuilders.webAppContextSetup(context).build());
+        flyway.migrate();
     }
 
     @Test
