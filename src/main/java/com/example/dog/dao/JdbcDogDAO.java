@@ -24,18 +24,6 @@ public class JdbcDogDAO implements DogDAO {
 
     public JdbcDogDAO(DriverManagerDataSource dataSource) {
         this.dataSource = dataSource;
-//        try (Connection conn = dataSource.getConnection()) {
-//            Statement statement = conn.createStatement();
-//            statement.execute(
-//                    "CREATE TABLE DOG (" +
-//                    "ID INTEGER PRIMARY KEY AUTO_INCREMENT, " +
-//                    "NAME VARCHAR (255) NOT NULL, " +
-//                    "HEIGHT INTEGER NOT NULL, " +
-//                    "WEIGHT INTEGER NOT NULL, " +
-//                    "BIRTHDAY TIMESTAMP WITH TIME ZONE)");
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     @Override
