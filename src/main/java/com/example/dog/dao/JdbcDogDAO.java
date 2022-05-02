@@ -2,6 +2,7 @@ package com.example.dog.dao;
 
 import com.example.dog.model.Dog;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.time.ZoneId;
@@ -26,12 +27,16 @@ public class JdbcDogDAO implements DogDAO {
         this.dataSource = dataSource;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Dog get(int id) {
+        Connection conn;
         PreparedStatement statement;
         ResultSet resultSet;
         Dog returnedDog = null;
-        try (Connection conn = dataSource.getConnection()) {
+        try {
+            conn = dataSource.getConnection();
+            conn.setReadOnly(true);
             statement = conn.prepareStatement(SQL_SELECT_DOG);
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
@@ -90,6 +95,7 @@ public class JdbcDogDAO implements DogDAO {
             int affectedRows = statement.executeUpdate();
             conn.commit();
             if (affectedRows == 0) {
+                conn.rollback();
                 throw new ObjectNotFoundException("Dog with id=" + id + " was not found!");
             }
             updatedDog = get(id);
