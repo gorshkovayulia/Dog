@@ -27,7 +27,6 @@ public class JdbcDogDAO implements DogDAO {
         this.dataSource = dataSource;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public Dog get(int id) {
         Connection conn;
