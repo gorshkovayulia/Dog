@@ -21,11 +21,12 @@
     </bean>
 
     <bean id="jdbcDogDao" class="com.example.dog.dao.JdbcDogDAO" primary="true">
-        <constructor-arg ref="dataSource"/>
+            <constructor-arg ref="jdbcConnectionHolder"/>
     </bean>
 
     <bean id="dogService" class="com.example.dog.service.DogService">
         <constructor-arg ref="jdbcDogDao"/>
+        <constructor-arg ref="jdbcConnectionHolder"/>
     </bean>
 
     <bean id = "dataSource" class = "org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -33,6 +34,10 @@
         <property name = "url" value = "${db.url}"/>
         <property name = "username" value = "${db.username}"/>
         <property name = "password" value = "${db.password}"/>
+    </bean>
+
+    <bean id="jdbcConnectionHolder" class="com.example.dog.dao.JdbcConnectionHolder">
+        <constructor-arg ref="dataSource"/>
     </bean>
 
     <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
