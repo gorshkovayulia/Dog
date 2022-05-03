@@ -2,7 +2,6 @@ package com.example.dog.dao;
 
 import com.example.dog.model.Dog;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
 import java.time.ZoneId;

@@ -11,7 +11,7 @@
        https://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean class="com.example.dog.controller.DogController">
-        <constructor-arg ref="jdbcDogDao"/>
+        <constructor-arg ref="dogService"/>
     </bean>
 
     <bean class="com.example.dog.controller.GlobalControllerExceptionHandler">
@@ -22,6 +22,10 @@
 
     <bean id="jdbcDogDao" class="com.example.dog.dao.JdbcDogDAO" primary="true">
         <constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean id="dogService" class="com.example.dog.service.DogService">
+        <constructor-arg ref="jdbcDogDao"/>
     </bean>
 
     <bean id = "dataSource" class = "org.springframework.jdbc.datasource.DriverManagerDataSource">

@@ -1,7 +1,7 @@
 package com.example.dog.controller;
 
-import com.example.dog.dao.DogDAO;
 import com.example.dog.model.Dog;
+import com.example.dog.service.DogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,15 +11,15 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(path="/dog", produces="application/json")
 public class DogController {
-    private final DogDAO dao;
+    private final DogService service;
 
-    public DogController(DogDAO dao) {
-        this.dao = dao;
+    public DogController(DogService service) {
+        this.service = service;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Dog> getDog(@PathVariable("id") int id) {
-        Dog dog = dao.get(id);
+        Dog dog = service.get(id);
         if (dog == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -28,18 +28,18 @@ public class DogController {
 
     @PostMapping
     public Dog createDog(@Valid @RequestBody Dog dog) {
-        return dao.add(dog);
+        return service.add(dog);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDog(@PathVariable("id") int id, @Valid @RequestBody Dog dog) {
-        Dog addedDog = dao.update(id, dog);
+        Dog addedDog = service.update(id, dog);
         return new ResponseEntity<>(addedDog, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Dog> removeDog(@PathVariable("id") int id) {
-        Dog dog = dao.remove(id);
+        Dog dog = service.remove(id);
         if (dog == null) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
