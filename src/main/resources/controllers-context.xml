@@ -24,9 +24,7 @@
             <constructor-arg ref="jdbcConnectionHolder"/>
     </bean>
 
-    <bean id="dogService" class="com.example.dog.service.DogService">
-        <constructor-arg ref="jdbcDogDao"/>
-        <constructor-arg ref="jdbcConnectionHolder"/>
+    <bean id="dogService" class="com.example.dog.service.DogService" autowire="byType">
     </bean>
 
     <bean id = "dataSource" class = "org.springframework.jdbc.datasource.DriverManagerDataSource">
