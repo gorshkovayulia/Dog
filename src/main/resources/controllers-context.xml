@@ -10,8 +10,7 @@
        http://www.springframework.org/schema/context
        https://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean class="com.example.dog.controller.DogController">
-        <constructor-arg ref="dogService"/>
+    <bean class="com.example.dog.controller.DogController" autowire="byType">
     </bean>
 
     <bean class="com.example.dog.controller.GlobalControllerExceptionHandler">
@@ -20,8 +19,7 @@
     <bean id="inMemoryDogDao" class="com.example.dog.dao.InMemoryDogDAO">
     </bean>
 
-    <bean id="jdbcDogDao" class="com.example.dog.dao.JdbcDogDAO" primary="true">
-            <constructor-arg ref="jdbcConnectionHolder"/>
+    <bean id="jdbcDogDao" class="com.example.dog.dao.JdbcDogDAO" primary="true" autowire="byType">
     </bean>
 
     <bean id="dogService" class="com.example.dog.service.DogService" autowire="byType">
@@ -34,8 +32,7 @@
         <property name = "password" value = "${db.password}"/>
     </bean>
 
-    <bean id="jdbcConnectionHolder" class="com.example.dog.dao.JdbcConnectionHolder">
-        <constructor-arg ref="dataSource"/>
+    <bean id="jdbcConnectionHolder" class="com.example.dog.dao.JdbcConnectionHolder" autowire="byType">
     </bean>
 
     <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
