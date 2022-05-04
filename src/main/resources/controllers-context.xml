@@ -24,12 +24,12 @@
         <constructor-arg ref="jdbcConnectionHolder"/>
     </bean>
 
-    <bean id="jdbcDogService" class="com.example.dog.service.JdbcDogService">
-        <constructor-arg ref="jdbcDogDao"/>
-    </bean>
-
-    <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService" primary="true">
-        <constructor-arg ref="jdbcDogService"/>
+    <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
+        <constructor-arg>
+            <bean class="com.example.dog.service.JdbcDogService">
+                <constructor-arg ref="jdbcDogDao"/>
+            </bean>
+        </constructor-arg>
         <constructor-arg ref="jdbcConnectionHolder"/>
     </bean>
 
