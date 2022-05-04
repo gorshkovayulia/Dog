@@ -1,15 +1,14 @@
 package com.example.dog.service;
 
 import com.example.dog.dao.JdbcConnectionHolder;
-import com.example.dog.dao.ObjectNotFoundException;
 import com.example.dog.model.Dog;
 
 public class TransactionalDogService implements DogService {
 
-    private final JdbcDogService dogService;
+    private final DogService dogService;
     private final JdbcConnectionHolder jdbcConnectionHolder;
 
-    public TransactionalDogService(JdbcDogService dogService, JdbcConnectionHolder jdbcConnectionHolder) {
+    public TransactionalDogService(DogService dogService, JdbcConnectionHolder jdbcConnectionHolder) {
         this.dogService = dogService;
         this.jdbcConnectionHolder = jdbcConnectionHolder;
     }
@@ -37,7 +36,7 @@ public class TransactionalDogService implements DogService {
         try {
             updatedDog = dogService.update(id, dog);
             jdbcConnectionHolder.commit();
-        } catch (ObjectNotFoundException e) {
+        } catch (Throwable e) {
             jdbcConnectionHolder.rollback();
             throw e;
         } finally {

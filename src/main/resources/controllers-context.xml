@@ -28,7 +28,7 @@
         <constructor-arg ref="jdbcDogDao"/>
     </bean>
 
-    <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
+    <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService" primary="true">
         <constructor-arg ref="jdbcDogService"/>
         <constructor-arg ref="jdbcConnectionHolder"/>
     </bean>
