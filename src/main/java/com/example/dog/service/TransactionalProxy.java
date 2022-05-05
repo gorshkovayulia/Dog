@@ -18,7 +18,7 @@ public class TransactionalProxy implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result;
         if (method.getName().startsWith("get")) {
             jdbcConnectionHolder.setReadOnly(true);
@@ -30,7 +30,7 @@ public class TransactionalProxy implements InvocationHandler {
             return result;
         } catch (Throwable e) {
             jdbcConnectionHolder.rollback();
-            throw e;
+            throw e.getCause();
         } finally {
             jdbcConnectionHolder.close();
         }
