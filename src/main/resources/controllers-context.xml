@@ -11,7 +11,7 @@
        https://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean class="com.example.dog.controller.DogController">
-        <constructor-arg ref="transactionalDogService"/>
+        <constructor-arg ref="transactionalProxy"/>
     </bean>
 
     <bean class="com.example.dog.controller.GlobalControllerExceptionHandler">
@@ -24,17 +24,23 @@
         <constructor-arg ref="jdbcConnectionHolder"/>
     </bean>
 
-    <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
-        <constructor-arg>
-            <bean class="com.example.dog.service.JdbcDogService">
-                <constructor-arg ref="jdbcDogDao"/>
-            </bean>
-        </constructor-arg>
-        <constructor-arg ref="jdbcConnectionHolder"/>
+    <bean id="jdbcDogService" class="com.example.dog.service.JdbcDogService" primary="true">
+        <constructor-arg ref="jdbcDogDao"/>
     </bean>
 
     <bean id="jdbcConnectionHolder" class="com.example.dog.dao.JdbcConnectionHolder">
         <constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
+        <constructor-arg ref="jdbcDogService"/>
+        <constructor-arg ref="jdbcConnectionHolder"/>
+    </bean>
+
+    <bean id="transactionalProxy" class="com.example.dog.service.TransactionalProxy" factory-method="createProxy">
+        <constructor-arg ref="jdbcConnectionHolder"/>
+        <constructor-arg type="java.lang.Class" value="com.example.dog.service.DogService"/>
+        <constructor-arg ref="jdbcDogService"/>
     </bean>
 
     <bean id = "dataSource" class = "org.springframework.jdbc.datasource.DriverManagerDataSource">
