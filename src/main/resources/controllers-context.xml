@@ -32,17 +32,6 @@
         <constructor-arg ref="dataSource"/>
     </bean>
 
-    <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
-        <constructor-arg ref="jdbcDogService"/>
-        <constructor-arg ref="jdbcConnectionHolder"/>
-    </bean>
-
-    <bean id="transactionalProxy" class="com.example.dog.service.TransactionalProxy" factory-method="createProxy">
-        <constructor-arg ref="jdbcConnectionHolder"/>
-        <constructor-arg type="java.lang.Class" value="com.example.dog.service.DogService"/>
-        <constructor-arg ref="jdbcDogService"/>
-    </bean>
-
     <bean id = "dataSource" class = "org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name = "driverClassName" value = "${db.driverClassName}"/>
         <property name = "url" value = "${db.url}"/>
@@ -70,5 +59,19 @@
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
         </mvc:message-converters>
     </mvc:annotation-driven>
+
+    <beans profile="transactionalDogService">
+        <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
+            <constructor-arg ref="jdbcDogService"/>
+            <constructor-arg ref="jdbcConnectionHolder"/>
+        </bean>
+    </beans>
+
+    <beans profile="transactionalProxy">
+        <bean id="transactionalProxy" class="com.example.dog.service.TransactionalProxy" factory-method="createProxy">
+            <constructor-arg ref="jdbcConnectionHolder"/>
+            <constructor-arg ref="jdbcDogService"/>
+        </bean>
+    </beans>
 
 </beans>

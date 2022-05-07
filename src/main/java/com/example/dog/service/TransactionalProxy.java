@@ -3,7 +3,6 @@ package com.example.dog.service;
 import com.example.dog.dao.JdbcConnectionHolder;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -37,12 +36,10 @@ public class TransactionalProxy implements InvocationHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T createProxy(JdbcConnectionHolder jdbcConnectionHolder,
-                                    Class<? super T> targetInterface, DogService target)  {
+    public static <T> T createProxy(JdbcConnectionHolder jdbcConnectionHolder, DogService target)  {
         return (T) Proxy.newProxyInstance(
                 DogService.class.getClassLoader(),
-                new Class[]{targetInterface},
+                new Class[]{DogService.class},
                 new TransactionalProxy(jdbcConnectionHolder, target));
-
     }
 }
