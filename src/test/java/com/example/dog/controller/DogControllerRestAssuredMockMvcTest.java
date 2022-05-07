@@ -4,6 +4,7 @@ import com.example.dog.model.Dog;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -22,6 +23,7 @@ import java.time.ZonedDateTime;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
 @ContextConfiguration(locations={"classpath:/controllers-context.xml"})
+@ActiveProfiles("transactionalProxy")
 @WebAppConfiguration
 public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringContextTests {
 
