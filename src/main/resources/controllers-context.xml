@@ -11,7 +11,7 @@
        https://www.springframework.org/schema/context/spring-context.xsd">
 
     <bean class="com.example.dog.controller.DogController">
-        <constructor-arg ref="proxy"/>
+        <constructor-arg ref="transactionalDogService"/>
     </bean>
 
     <bean class="com.example.dog.controller.GlobalControllerExceptionHandler">
@@ -61,14 +61,14 @@
     </mvc:annotation-driven>
 
     <beans profile="transactionalDogService">
-        <bean id="proxy" class="com.example.dog.service.TransactionalDogService">
+        <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
             <constructor-arg ref="jdbcDogService"/>
             <constructor-arg ref="jdbcConnectionHolder"/>
         </bean>
     </beans>
 
     <beans profile="transactionalProxy">
-        <bean id="proxy" class="com.example.dog.service.TransactionalProxy" factory-method="createProxy">
+        <bean id="transactionalDogService" class="com.example.dog.service.TransactionalProxy" factory-method="createProxy">
             <constructor-arg ref="jdbcConnectionHolder"/>
             <constructor-arg ref="jdbcDogService"/>
         </bean>
