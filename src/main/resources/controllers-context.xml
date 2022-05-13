@@ -65,4 +65,13 @@
         </bean>
     </beans>
 
+    <beans profile="cglib-proxies">
+        <bean id="transactionalDogService" class="com.example.dog.service.CglibTransactionalDogService" factory-method="createProxy">
+            <constructor-arg ref="jdbcConnectionHolder"/>
+            <constructor-arg>
+                <bean class="com.example.dog.service.JdbcDogService" />
+            </constructor-arg>
+        </bean>
+    </beans>
+
 </beans>

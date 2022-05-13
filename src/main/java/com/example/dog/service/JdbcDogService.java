@@ -1,6 +1,7 @@
 package com.example.dog.service;
 
 import com.example.dog.dao.DogDAO;
+import com.example.dog.dao.ObjectNotFoundException;
 import com.example.dog.model.Dog;
 
 public class JdbcDogService implements DogService {
@@ -28,6 +29,8 @@ public class JdbcDogService implements DogService {
 
     @Override
     public Dog remove(int id) {
+//        if(get(id) == null) // TODO: Will this be transactional? How to make it transactional?
+//            throw new ObjectNotFoundException(null);
         return dao.remove(id);
     }
 }

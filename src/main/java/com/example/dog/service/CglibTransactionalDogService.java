@@ -2,22 +2,25 @@ package com.example.dog.service;
 
 import com.example.dog.dao.JdbcConnectionHolder;
 import org.springframework.cglib.proxy.Enhancer;
-import org.springframework.cglib.proxy.InvocationHandler;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.stream.Stream;
 
-public class CglibTransactionalDogService implements InvocationHandler {
+public class CglibTransactionalDogService implements MethodInterceptor {
 
     private final JdbcConnectionHolder jdbcConnectionHolder;
     private final Object target;
 
     public CglibTransactionalDogService(JdbcConnectionHolder jdbcConnectionHolder, Object target) {
-        this.target = target;
         this.jdbcConnectionHolder = jdbcConnectionHolder;
+        this.target = target;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         Object result;
         if (method.getName().startsWith("get")) {
             jdbcConnectionHolder.setReadOnly(true);
@@ -35,10 +38,17 @@ public class CglibTransactionalDogService implements InvocationHandler {
         }
     }
 
-    public static Object createProxy(JdbcConnectionHolder jdbcConnectionHolder, Object target) {
+    public static <T> T createProxy(JdbcConnectionHolder jdbcConnectionHolder, T target) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(target.getClass());
         enhancer.setCallback(new CglibTransactionalDogService(jdbcConnectionHolder, target));
-        return enhancer.create();
+
+        Constructor<?> constructor = Stream.of(target.getClass().getConstructors())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No available constructor to create proxy object"));
+        Class<?>[] argTypes = constructor.getParameterTypes();
+        Object[] args = new Object[argTypes.length];
+        //noinspection unchecked
+        return (T) enhancer.create(argTypes, args);
     }
 }
