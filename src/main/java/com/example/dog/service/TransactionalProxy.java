@@ -35,11 +35,10 @@ public class TransactionalProxy implements InvocationHandler {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(JdbcConnectionHolder jdbcConnectionHolder, DogService target)  {
-        return (T) Proxy.newProxyInstance(
-                DogService.class.getClassLoader(),
-                new Class[]{DogService.class},
+    public static Object createProxy(JdbcConnectionHolder jdbcConnectionHolder, Object target)  {
+        return Proxy.newProxyInstance(
+                target.getClass().getClassLoader(),
+                target.getClass().getInterfaces(),
                 new TransactionalProxy(jdbcConnectionHolder, target));
     }
 }

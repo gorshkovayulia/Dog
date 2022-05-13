@@ -13,7 +13,7 @@
         </init-param>
         <init-param>
             <param-name>spring.profiles.active</param-name>
-            <param-value>transactionalProxy</param-value>
+            <param-value>jdk-proxies</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

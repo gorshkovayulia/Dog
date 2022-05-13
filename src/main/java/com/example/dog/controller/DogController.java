@@ -2,7 +2,6 @@ package com.example.dog.controller;
 
 import com.example.dog.model.Dog;
 import com.example.dog.service.DogService;
-import com.example.dog.service.TransactionalDogService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

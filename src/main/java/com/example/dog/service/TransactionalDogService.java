@@ -7,11 +7,10 @@ import com.example.dog.model.Dog;
 Was replaced with TransactionalProxy
  */
 public class TransactionalDogService implements DogService {
-
-    private final DogService dogService;
     private final JdbcConnectionHolder jdbcConnectionHolder;
+    private final JdbcDogService dogService;
 
-    public TransactionalDogService(DogService dogService, JdbcConnectionHolder jdbcConnectionHolder) {
+    public TransactionalDogService(JdbcConnectionHolder jdbcConnectionHolder, JdbcDogService dogService) {
         this.dogService = dogService;
         this.jdbcConnectionHolder = jdbcConnectionHolder;
     }
