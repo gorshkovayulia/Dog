@@ -16,13 +16,8 @@ public class DogServiceAspect {
 
     public Object addTransactionalSupport(ProceedingJoinPoint pjp, JoinPoint jp) throws Throwable {
         Object result;
-        Annotation[] annotations = jp.getSignature().getDeclaringType().getAnnotations();
-        if(annotations.length != 0) {
-            for (Annotation ann : annotations) {
-                if (ann.toString().equals("CustomTransactional")) {
-                    jdbcConnectionHolder.setReadOnly(true);
-                }
-            }
+        if (jp.getSignature().getName().startsWith("get")) {
+            jdbcConnectionHolder.setReadOnly(true);
         }
         jdbcConnectionHolder.startTransaction();
         try {

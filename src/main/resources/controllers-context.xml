@@ -19,7 +19,7 @@
     <aop:config proxy-target-class="true">
         <aop:aspect ref="dogServiceAspect">
             <aop:around
-                    pointcut="execution(* com.example.dog.service.DogService.*(..))"
+                    pointcut="@annotation(com.example.dog.utils.CustomTransactional)"
                     method="addTransactionalSupport" arg-names="pjp,jp"/>
         </aop:aspect>
     </aop:config>

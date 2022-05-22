@@ -23,7 +23,7 @@ import java.time.ZonedDateTime;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
 @ContextConfiguration(locations={"classpath:/controllers-context.xml"})
-@ActiveProfiles("cglib-proxies")
+//@ActiveProfiles("cglib-proxies")
 @WebAppConfiguration
 public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringContextTests {
 
