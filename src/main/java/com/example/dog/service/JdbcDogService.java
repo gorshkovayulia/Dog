@@ -3,6 +3,7 @@ package com.example.dog.service;
 import com.example.dog.dao.DogDAO;
 import com.example.dog.dao.ObjectNotFoundException;
 import com.example.dog.model.Dog;
+import com.example.dog.utils.CustomTransactional;
 
 public class JdbcDogService implements DogService {
 

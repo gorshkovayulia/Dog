@@ -3,20 +3,35 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/mvc
        https://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/context
-       https://www.springframework.org/schema/context/spring-context.xsd" default-autowire="constructor">
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd"
+       default-autowire="constructor">
+
+    <bean id="dogServiceAspect" class="com.example.dog.utils.DogServiceAspect" />
+
+    <aop:config proxy-target-class="true">
+        <aop:aspect ref="dogServiceAspect">
+            <aop:around
+                    pointcut="execution(* com.example.dog.service.DogService.*(..))"
+                    method="addTransactionalSupport" arg-names="pjp,jp"/>
+        </aop:aspect>
+    </aop:config>
 
     <bean class="com.example.dog.controller.DogController">
-        <constructor-arg ref="transactionalDogService"/>
+        <constructor-arg ref="jdbcDogService"/>
     </bean>
     <bean class="com.example.dog.controller.GlobalControllerExceptionHandler" />
     <bean class="com.example.dog.dao.InMemoryDogDAO" />
     <bean class="com.example.dog.dao.JdbcDogDAO" primary="true" />
     <bean id="jdbcConnectionHolder" class="com.example.dog.dao.JdbcConnectionHolder" />
+    <bean id="jdbcDogService" class="com.example.dog.service.JdbcDogService" />
 
     <bean id = "dataSource" class = "org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name = "driverClassName" value = "${db.driverClassName}"/>
@@ -50,27 +65,21 @@
     <beans profile="manual-proxy">
         <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
             <constructor-arg ref="jdbcConnectionHolder"/>
-            <constructor-arg>
-                <bean class="com.example.dog.service.JdbcDogService" />
-            </constructor-arg>
+            <constructor-arg ref="jdbcDogService" />
         </bean>
     </beans>
 
     <beans profile="jdk-proxies">
         <bean id="transactionalDogService" class="com.example.dog.service.TransactionalProxy" factory-method="createProxy">
             <constructor-arg ref="jdbcConnectionHolder"/>
-            <constructor-arg>
-                <bean class="com.example.dog.service.JdbcDogService" />
-            </constructor-arg>
+            <constructor-arg ref="jdbcDogService" />
         </bean>
     </beans>
 
     <beans profile="cglib-proxies">
         <bean id="transactionalDogService" class="com.example.dog.service.CglibTransactionalDogService" factory-method="createProxy">
             <constructor-arg ref="jdbcConnectionHolder"/>
-            <constructor-arg>
-                <bean class="com.example.dog.service.JdbcDogService" />
-            </constructor-arg>
+            <constructor-arg ref="jdbcDogService" />
         </bean>
     </beans>
 

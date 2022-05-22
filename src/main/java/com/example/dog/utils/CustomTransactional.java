@@ -6,14 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Compile-time annotation for methods, whose execution should be logged.
+ * This annotation is used for get method that requires only read-only mode
  */
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface Loggable {
-    enum Level {
-        INFO
-    }
-
-    Level level() default Level.INFO;
+public @interface CustomTransactional {
 }
