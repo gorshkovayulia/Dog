@@ -16,7 +16,7 @@
 
     <bean id="dogServiceAspect" class="com.example.dog.utils.DogServiceAspect" />
 
-    <aop:config proxy-target-class="true">
+    <aop:config>
         <aop:aspect ref="dogServiceAspect">
             <aop:around
                     pointcut="@annotation(com.example.dog.utils.CustomTransactional)"
