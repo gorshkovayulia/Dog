@@ -1,7 +1,6 @@
 package com.example.dog.service;
 
 import com.example.dog.model.Dog;
-import com.example.dog.utils.CustomTransactional;
 
 public interface DogService {
     Dog get(int id);

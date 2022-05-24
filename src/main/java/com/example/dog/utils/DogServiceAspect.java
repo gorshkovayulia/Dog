@@ -4,8 +4,6 @@ import com.example.dog.dao.JdbcConnectionHolder;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 
-import java.lang.annotation.Annotation;
-
 public class DogServiceAspect {
 
     private final JdbcConnectionHolder jdbcConnectionHolder;
