@@ -22,7 +22,7 @@ public class DogControllerRestAssuredTest {
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 4, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
 
         Dog fromPost = getDogFromPostRequest(dog);
         Dog fromGet = getDog(fromPost.getId());
@@ -44,11 +44,11 @@ public class DogControllerRestAssuredTest {
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 5, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
         Dog dog2 = new Dog("Sharik", 15, 10,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 6, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
 
         Dog fromPost = getDogFromPostRequest(dog);
         Dog fromPut = getDogFromPutRequest(fromPost.getId(), dog2);
@@ -61,7 +61,7 @@ public class DogControllerRestAssuredTest {
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 7, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
 
         Response resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
         Assert.assertEquals(resp.getStatusCode(), 404);
@@ -73,7 +73,7 @@ public class DogControllerRestAssuredTest {
         Dog fromPost = getDogFromPostRequest(new Dog("Scooby-Doo", 80, 3,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 8, 59),
-                        ZoneId.of("Europe/Moscow"))));
+                        ZoneId.systemDefault())));
 
         Dog fromDelete = getDogFromDeleteRequest(fromPost.getId());
         ReflectionAssert.assertReflectionEquals(fromPost, fromDelete);

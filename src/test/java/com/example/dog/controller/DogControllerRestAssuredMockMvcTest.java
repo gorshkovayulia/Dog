@@ -4,7 +4,6 @@ import com.example.dog.model.Dog;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.response.MockMvcResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -39,7 +38,7 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
     public void possibleToGetExistingDog() {
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(LocalDateTime.of(2021, Month.OCTOBER, 26, 5, 59),
-                ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
 
         Dog fromPost = getDogFromPostRequest(dog);
         Dog fromGet = getDog(fromPost.getId());
@@ -61,11 +60,11 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 5, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
         Dog dog2 = new Dog("Sharik", 15, 10,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 6, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
 
         Dog fromPost = getDogFromPostRequest(dog);
         Dog fromPut = getDogFromPutRequest(fromPost.getId(), dog2);
@@ -78,7 +77,7 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 7, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
         MockMvcResponse resp = updateDogAndReturn(Integer.MAX_VALUE, dog);
         Assert.assertEquals(resp.getStatusCode(), 404);
         Assert.assertEquals(resp.getBody().asString(), "\"" + "Dog with id=" + Integer.MAX_VALUE + " was not found!" + "\"");
@@ -89,7 +88,7 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
         Dog fromPost = getDogFromPostRequest(new Dog("Scooby-Doo", 80, 3,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 8, 59),
-                        ZoneId.of("Europe/Moscow"))));
+                        ZoneId.systemDefault())));
 
         Dog fromDelete = getDogFromDeleteRequest(fromPost.getId());
         ReflectionAssert.assertReflectionEquals(fromPost, fromDelete);
@@ -108,7 +107,7 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
         MockMvcResponse resp = postDogAndReturn(new Dog("", 80, 3,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 9, 59),
-                        ZoneId.of("Europe/Moscow"))));
+                        ZoneId.systemDefault())));
         Assert.assertEquals(resp.getStatusCode(), 400);
     }
 
@@ -117,11 +116,11 @@ public class DogControllerRestAssuredMockMvcTest extends AbstractTestNGSpringCon
         Dog dog = new Dog("Tuzik", 24, 8,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 10, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
         Dog dog2 = new Dog("Sharik", 0, 10,
                 ZonedDateTime.of(
                         LocalDateTime.of(2021, Month.OCTOBER, 26, 11, 59),
-                        ZoneId.of("Europe/Moscow")));
+                        ZoneId.systemDefault()));
 
         Dog fromPost = getDogFromPostRequest(dog);
         MockMvcResponse resp = updateDogAndReturn(fromPost.getId(), dog2);
