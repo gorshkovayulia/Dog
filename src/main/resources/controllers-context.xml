@@ -20,7 +20,7 @@
         <aop:aspect ref="dogServiceAspect">
             <aop:around
                     pointcut="@annotation(com.example.dog.utils.CustomTransactional)"
-                    method="addTransactionalSupport" arg-names="pjp,jp"/>
+                    method="addTransactionalSupport" />
         </aop:aspect>
     </aop:config>
 

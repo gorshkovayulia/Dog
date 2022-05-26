@@ -8,9 +8,9 @@ Was replaced with TransactionalProxy
  */
 public class TransactionalDogService implements DogService {
     private final JdbcConnectionHolder jdbcConnectionHolder;
-    private final JdbcDogService dogService;
+    private final DogService dogService;
 
-    public TransactionalDogService(JdbcConnectionHolder jdbcConnectionHolder, JdbcDogService dogService) {
+    public TransactionalDogService(JdbcConnectionHolder jdbcConnectionHolder, DogService dogService) {
         this.dogService = dogService;
         this.jdbcConnectionHolder = jdbcConnectionHolder;
     }

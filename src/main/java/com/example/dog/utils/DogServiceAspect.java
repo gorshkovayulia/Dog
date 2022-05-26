@@ -1,7 +1,6 @@
 package com.example.dog.utils;
 
 import com.example.dog.dao.JdbcConnectionHolder;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 public class DogServiceAspect {
@@ -12,9 +11,9 @@ public class DogServiceAspect {
         this.jdbcConnectionHolder = jdbcConnectionHolder;
     }
 
-    public Object addTransactionalSupport(ProceedingJoinPoint pjp, JoinPoint jp) throws Throwable {
+    public Object addTransactionalSupport(ProceedingJoinPoint pjp) throws Throwable {
         Object result;
-        if (jp.getSignature().getName().startsWith("get")) {
+        if (pjp.getSignature().getName().startsWith("get")) {
             jdbcConnectionHolder.setReadOnly(true);
         }
         jdbcConnectionHolder.startTransaction();

@@ -35,7 +35,7 @@ public class TransactionalProxy implements InvocationHandler {
         }
     }
 
-    public static Object createProxy(JdbcConnectionHolder jdbcConnectionHolder, Object target)  {
+    public static Object createProxy(JdbcConnectionHolder jdbcConnectionHolder, DogService target)  {
         return Proxy.newProxyInstance(
                 target.getClass().getClassLoader(),
                 target.getClass().getInterfaces(),

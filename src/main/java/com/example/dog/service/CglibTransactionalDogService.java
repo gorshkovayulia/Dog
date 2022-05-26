@@ -38,7 +38,7 @@ public class CglibTransactionalDogService implements MethodInterceptor {
         }
     }
 
-    public static <T> T createProxy(JdbcConnectionHolder jdbcConnectionHolder, T target) {
+    public static <T> T createProxy(JdbcConnectionHolder jdbcConnectionHolder, DogService target) {
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(target.getClass());
         enhancer.setCallback(new CglibTransactionalDogService(jdbcConnectionHolder, target));
