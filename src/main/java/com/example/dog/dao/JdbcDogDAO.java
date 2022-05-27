@@ -1,7 +1,9 @@
 package com.example.dog.dao;
 
 import com.example.dog.model.Dog;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -17,15 +19,15 @@ public class JdbcDogDAO implements DogDAO {
             "update dog set name = ?, height = ?, weight = ?, birthday = ? where id = ?";
     private static final String SQL_DELETE_DOG =
             "delete from dog where id = ?";
-    private final JdbcConnectionHolder connections;
+    private final DataSource dataSource;
 
-    public JdbcDogDAO(JdbcConnectionHolder connections) {
-        this.connections = connections;
+    public JdbcDogDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public Dog get(int id) {
-        Connection conn = connections.getConnection();
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         Dog returnedDog = null;
         try (PreparedStatement statement = conn.prepareStatement(SQL_SELECT_DOG)) {
             statement.setInt(1, id);
@@ -43,7 +45,7 @@ public class JdbcDogDAO implements DogDAO {
 
     @Override
     public Dog add(Dog dog) {
-        Connection conn = connections.getConnection();
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         try (PreparedStatement statement = conn.prepareStatement(SQL_INSERT_DOG, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, dog.getName());
             statement.setInt(2, dog.getHeight());
@@ -63,7 +65,7 @@ public class JdbcDogDAO implements DogDAO {
 
     @Override
     public Dog update(int id, Dog dog) {
-        Connection conn = connections.getConnection();
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         Dog updatedDog;
         try (PreparedStatement statement = conn.prepareStatement(SQL_UPDATE_DOG)) {
             statement.setString(1, dog.getName());
@@ -84,7 +86,7 @@ public class JdbcDogDAO implements DogDAO {
 
     @Override
     public Dog remove(int id) {
-        Connection conn = connections.getConnection();
+        Connection conn = DataSourceUtils.getConnection(dataSource);
         Dog removedDog = get(id);
         try (PreparedStatement statement = conn.prepareStatement(SQL_DELETE_DOG)) {
             statement.setInt(1, id);

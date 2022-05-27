@@ -3,8 +3,8 @@ package com.example.dog.service;
 import com.example.dog.dao.JdbcConnectionHolder;
 import com.example.dog.model.Dog;
 
-/*
-Was replaced with TransactionalProxy
+/**
+ * Manually created Proxy for DogService
  */
 public class TransactionalDogService implements DogService {
     private final JdbcConnectionHolder jdbcConnectionHolder;

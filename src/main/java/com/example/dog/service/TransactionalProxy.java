@@ -6,6 +6,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+/**
+ * JDK Dynamic Proxy
+ */
 public class TransactionalProxy implements InvocationHandler {
 
     private final JdbcConnectionHolder jdbcConnectionHolder;
