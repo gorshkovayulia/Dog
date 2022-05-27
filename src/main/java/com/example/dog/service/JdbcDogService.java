@@ -14,25 +14,21 @@ public class JdbcDogService implements DogService {
     }
 
     @Override
-    @CustomTransactional
     public Dog get(int id) {
         return dao.get(id);
     }
 
     @Override
-    @CustomTransactional
     public Dog add(Dog dog) {
         return dao.add(dog);
     }
 
     @Override
-    @CustomTransactional
     public Dog update(int id, Dog dog) {
         return dao.update(id, dog);
     }
 
     @Override
-    @CustomTransactional
     public Dog remove(int id) {
 //        if(get(id) == null) // TODO: Will this be transactional? How to make it transactional?
 //            throw new ObjectNotFoundException(null);
