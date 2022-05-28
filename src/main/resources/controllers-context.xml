@@ -74,6 +74,10 @@
         </tx:attributes>
     </tx:advice>
 
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
     <beans profile="manual-proxy">
         <bean id="transactionalDogService" class="com.example.dog.service.TransactionalDogService">
             <constructor-arg ref="jdbcConnectionHolder"/>

@@ -1,9 +1,8 @@
 package com.example.dog.service;
 
 import com.example.dog.dao.DogDAO;
-import com.example.dog.dao.ObjectNotFoundException;
 import com.example.dog.model.Dog;
-import com.example.dog.utils.CustomTransactional;
+import org.springframework.transaction.annotation.Transactional;
 
 public class JdbcDogService implements DogService {
 
@@ -14,21 +13,25 @@ public class JdbcDogService implements DogService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Dog get(int id) {
         return dao.get(id);
     }
 
     @Override
+    @Transactional
     public Dog add(Dog dog) {
         return dao.add(dog);
     }
 
     @Override
+    @Transactional
     public Dog update(int id, Dog dog) {
         return dao.update(id, dog);
     }
 
     @Override
+    @Transactional
     public Dog remove(int id) {
 //        if(get(id) == null) // TODO: Will this be transactional? How to make it transactional?
 //            throw new ObjectNotFoundException(null);

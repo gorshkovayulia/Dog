@@ -49,8 +49,8 @@ public class JdbcDogDAOTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void IllegalArgumentExceptionIsThrownInCaseUpdatingOfNotExistingDog() {
-        Assert.assertThrows(IllegalArgumentException.class, () -> jdbcDogDao.update(Integer.MAX_VALUE, new Dog("Sharik", 24, 8,
+    public void ObjectNotFoundExceptionIsThrownInCaseUpdatingOfNotExistingDog() {
+        Assert.assertThrows(ObjectNotFoundException.class, () -> jdbcDogDao.update(Integer.MAX_VALUE, new Dog("Sharik", 24, 8,
                 ZonedDateTime.of(LocalDateTime.of(2020, Month.OCTOBER, 26, 4, 59),
                         ZoneId.of("Europe/Moscow")))));
     }
