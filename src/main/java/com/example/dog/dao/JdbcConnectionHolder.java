@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * Was replaced with org.springframework.jdbc.datasource.DataSourceUtils
+ * Was replaced with {@link org.springframework.jdbc.datasource.DataSourceUtils}
  */
 public class JdbcConnectionHolder {
     private final ThreadLocal<Connection> connections = new ThreadLocal<>();

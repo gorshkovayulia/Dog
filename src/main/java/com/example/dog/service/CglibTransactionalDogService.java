@@ -9,9 +9,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
-/**
- * CGLIB Proxy
- */
 public class CglibTransactionalDogService implements MethodInterceptor {
 
     private final JdbcConnectionHolder jdbcConnectionHolder;
